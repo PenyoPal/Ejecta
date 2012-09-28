@@ -4,65 +4,97 @@ var w2 = w/2;
 var h2 = h/2;
 
 var canvas = document.getElementById('canvas');
-canvas.width = w
+canvas.width = w;
 canvas.height = h;
 
-var ctx = canvas.getContext('2d');
+ejecta.require('scene_picker.js');
+ejecta.require('lib/caat/caat.js');
 
+Array.prototype.randomElement = function () {
+  return this[Math.floor(Math.random() * this.length)];
+};
 
-var curves = [];
-for( var i = 0; i < 200; i++ ) {
-	curves.push({
-		current: Math.random() * 1000,
-		inc: Math.random() * 0.005 + 0.002,
-		color: '#'+(Math.random()*0xFFFFFF<<0).toString(16) // Random color
-	});
-}
+var Game = {};
 
-var p = [0,0, 0,0, 0,0, 0,0];
-var animate = function() {
-	// Clear the screen - note that .globalAlpha is still honored,
-	// so this will only "darken" the sceen a bit
-	ctx.globalCompositeOperation = 'source-over';
-	ctx.fillRect(0,0,w,h);
+Game.Character = function(director) {
+  var meta = {
+    height_choices: ["s","t"],
+    weight_choices: ["s","f"],
+    color_choices: ["blue","purple","red"],
+    item_choices: ["glasses","hat","scarf"], // TODO: null option
+    mood_choices: ["angry","happy","sad"],
+    dimensions: {
+      ss: [231,239],
+      sf: [231,239],
+      ts: [300,462],
+      tf: [300,462]
+    }
+  };
 
-	// Use the additive blend mode to draw the bezier curves
-	ctx.globalCompositeOperation = 'lighter';
-	
-	// Calculate curve positions and draw
-	for( var i = 0; i < maxCurves; i++ ) {
-		var curve = curves[i];
-		curve.current += curve.inc;
-		for( var j = 0; j < p.length; j+=2 ) {
-			var a = Math.sin( curve.current * (j+3) * 373 * 0.0001 );
-			var b = Math.sin( curve.current * (j+5) * 927 * 0.0002 );
-			var c = Math.sin( curve.current * (j+5) * 573 * 0.0001 );
-			p[j] = (a * a * b + c * a + b) * w * c + w2;
-			p[j+1] = (a * b * b + c - a * b *c) * h2 + h2;
-		}
+  var c = {
+    height: meta.height_choices.randomElement(),
+    weight: meta.weight_choices.randomElement(),
+    color: meta.color_choices.randomElement(),
+    item: meta.item_choices.randomElement(),
+    mood: meta.mood_choices.randomElement(),
+    images: {
+      face: new Image(),
+      body: new Image(),
+      item: new Image()
+    }
+  };
 
-		ctx.beginPath();
-		ctx.moveTo( p[0], p[1] );
-		ctx.bezierCurveTo( p[2], p[3], p[4], p[5], p[6], p[7] );
-		ctx.strokeStyle = curve.color;
-		ctx.stroke();
-	}
+  var path = "assets/persons/";
+  var ext = ".png";
+
+  c.images.face.src = path + c.height + c.weight + "-" + c.color + "-" + c.mood + ext;
+  c.images.body.src = path + c.height + c.weight + "-" + c.color + ext;
+  c.images.item.src = path + c.height + c.weight + "-" + c.item + ext;
+
+  var cActor = new CAAT.ActorContainer().
+    setBounds(0,0,300,462);
+
+  setTimeout(function(){ // HACK: timeout so that images have a chance to load
+      var x = 300, y = 462;
+
+      var face = new CAAT.Actor().
+      setBackgroundImage(c.images.face, true).
+      setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+      var body = new CAAT.Actor().
+      setBackgroundImage(c.images.body, true).
+      setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+      var item = new CAAT.Actor().
+      setBackgroundImage(c.images.item, true).
+      setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+      cActor.addChild(body);
+      cActor.addChild(face);
+      cActor.addChild(item);
+    }, 50);
+
+  cActor.data = c;
+
+  return cActor;
 };
 
 
-// The vertical touch position controls the number of curves;
-// horizontal controls the line width
-var maxCurves = 70;
-document.addEventListener( 'touchmove', function( ev ) {
-	ctx.lineWidth = (ev.touches[0].pageX/w) * 20;
-	maxCurves = Math.floor((ev.touches[0].pageY/h) * curves.length);
-}, false );
+function setupCAAT() {
+  function __scene(director) {
+    var scene = director.createScene();
+    var bg = new CAAT.ActorContainer().
+      setBounds(0,0,director.width,director.height).
+      setFillStyle('#000000');
+    scene.addChild(bg);
+    var character = new Game.Character();
+    bg.addChild(character);
+  }
 
+  var director = new CAAT.Director().initialize(w, h, canvas);
+  ScenePicker.director = director;
+  ScenePicker.start();
+  CAAT.loop(60);
+}
 
-
-ctx.fillStyle = '#000000';
-ctx.fillRect( 0, 0, w, h );
-
-ctx.globalAlpha = 0.05;
-ctx.lineWidth = 2;
-setInterval( animate, 16 );
+setupCAAT();
