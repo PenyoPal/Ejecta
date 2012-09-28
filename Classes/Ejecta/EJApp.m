@@ -196,10 +196,12 @@ static EJApp * ejectaInstance = NULL;
 // Script loading and execution
 
 - (void)loadScriptAtPath:(NSString *)path {
-	NSString * script = [NSString stringWithContentsOfFile:[EJApp pathForResource:path] encoding:NSUTF8StringEncoding error:NULL];	
+	NSError *err;
+	NSString * script = [NSString stringWithContentsOfFile:[EJApp pathForResource:path] encoding:NSUTF8StringEncoding error:&err];
 	
 	if( !script ) {
 		NSLog(@"Error: Can't Find Script %@", path );
+		NSLog(@"%@", err.localizedDescription);
 		return;
 	}
 	
