@@ -1,0 +1,223 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>Hello World Application</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/appmobi.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../lib/caat/caat.js"></script>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+        * {
+           -webkit-user-select: none;  /* prevent copy paste for all elements */
+        }
+        body {  }
+    </style>
+
+    <script type="text/javascript" language="javascript">
+
+    Array.prototype.randomElement = function () {
+      return this[Math.floor(Math.random() * this.length)]
+    }
+
+    //global variables
+    //Initialization function
+    function init() {}
+
+    //*** Prevent Default Scrolling ******
+    preventDefaultScroll = function(event) {
+        // Prevent scrolling on this element
+        event.preventDefault();
+        window.scroll(0,0);
+        return false;
+    };
+
+    window.document.addEventListener('touchmove', preventDefaultScroll, false);
+    var bkDecal, bg, x = 0;
+
+    var frames = [];
+
+    var Game = {};
+
+    Game.Character = function(director){
+      var meta = {
+        height_choices: ["s","t"],
+        weight_choices: ["s","f"],
+        color_choices: ["blue","purple","red"],
+        item_choices: ["glasses","hat","scarf"], // TODO: null option
+        mood_choices: ["angry","happy","sad"],
+        dimensions: {
+          ss: [231,239],
+          sf: [231,239],
+          ts: [300,462],
+          tf: [300,462]
+        }
+      }
+
+      var c = {
+        height: meta.height_choices.randomElement(),
+        weight: meta.weight_choices.randomElement(),
+        color: meta.color_choices.randomElement(),
+        item: meta.item_choices.randomElement(),
+        mood: meta.mood_choices.randomElement(),
+        images: {
+          face: new Image(),
+          body: new Image(),
+          item: new Image()
+        }
+      }
+
+      var path = "../assets/persons/";
+      var ext = ".png";
+
+      c.images.face.src = path + c.height + c.weight + "-" + c.color + "-" + c.mood + ext;
+      c.images.body.src = path + c.height + c.weight + "-" + c.color + ext;
+      c.images.item.src = path + c.height + c.weight + "-" + c.item + ext;
+
+      var cActor = new CAAT.ActorContainer().
+          setBounds(0,0,300,462);
+
+      setTimeout(function(){ // HACK: timeout so that images have a chance to load
+        var x = 300, y = 592;
+
+        var face = new CAAT.Actor().
+          setBackgroundImage(c.images.face, true).
+          setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+        var body = new CAAT.Actor().
+          setBackgroundImage(c.images.body, true).
+          setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+        var item = new CAAT.Actor().
+          setBackgroundImage(c.images.item, true).
+          setLocation((x-c.images.body.width)/2, (y-c.images.body.height));
+
+        cActor.addChild(body);
+        cActor.addChild(face);
+        cActor.addChild(item);
+      }, 50);
+
+      cActor.data = c;
+
+      return cActor;
+    }
+
+    function setupCAAT() {
+
+      function __scene(director) {
+        var scene = director.createScene();
+
+        bg = new CAAT.ActorContainer().
+          setBounds(0,0,director.width,director.height).
+          setFillStyle('#000000');
+
+          // Create the frames
+          for(var i = 0 ; i < 14; i++){
+            var actor = new CAAT.Actor().
+                setBackgroundImage(director.getImage('bk' + i), true).
+                setPosition(i * 1024 - (1024 * 13), 10);
+
+            var pathBehavior = new CAAT.PathBehavior().
+                                  setFrameTime(0, 50000).
+                                  setPath(
+                                    new CAAT.Path().setLinear(
+                                          actor.x, actor.y,
+                                          actor.x + 10000, actor.y)
+                                    );
+
+            actor.addBehavior(pathBehavior);
+            frames.push(actor);
+            scene.addChild(frames[i]);
+        }
+      
+        // Make a bunch of random characters
+        for(var i = 0; i < 10; i++){
+          var character = new Game.Character();
+          character.setLocation(i * 250, 0);
+          scene.addChild(character);
+        }
+      }
+
+      function __init() {
+
+        var director = new CAAT.Director().
+          initialize(1024, 640, document.getElementById("thecanvas"));
+
+        new CAAT.ImagePreloader().loadImages(
+          [
+            {id:'char', url:'../assets/persons/sf-blue-angry.png'},
+
+            {id:'bk0', url:'../assets/scene_bg/PP_bg_01.png'},
+            {id:'bk1', url:'../assets/scene_bg/PP_bg_02.png'},
+            {id:'bk2', url:'../assets/scene_bg/PP_bg_03.png'},
+            {id:'bk3', url:'../assets/scene_bg/PP_bg_04.png'},
+            {id:'bk4', url:'../assets/scene_bg/PP_bg_05.png'},
+            {id:'bk5', url:'../assets/scene_bg/PP_bg_06.png'},
+            {id:'bk6', url:'../assets/scene_bg/PP_bg_07.png'},
+            {id:'bk7', url:'../assets/scene_bg/PP_bg_08.png'},
+            {id:'bk8', url:'../assets/scene_bg/PP_bg_09.png'},
+            {id:'bk9', url:'../assets/scene_bg/PP_bg_10.png'},
+            {id:'bk10', url:'../assets/scene_bg/PP_bg_11.png'},
+            {id:'bk11', url:'../assets/scene_bg/PP_bg_12.png'},
+            {id:'bk12', url:'../assets/scene_bg/PP_bg_13.png'},
+            {id:'bk13', url:'../assets/scene_bg/PP_bg_14.png'},
+          ],
+          function( counter, images ) {
+            director.setImagesCache(images);
+            __scene(director);
+          }
+        );
+ 
+        CAAT.loop(60);
+      }
+
+      __init();
+
+
+   
+
+    }
+    //*** Device Ready Code **********
+    //This event handler is fired once the AppMobi libraries are ready
+    //AppMobi is ready to roll
+    function testingStuffCallback(res) {
+      document.getElementById('contentstuff').innerHTML = 'gamma(5) = ' + res;
+    }
+    function onDeviceReady() {
+      //use AppMobi viewport
+      AppMobi.display.useViewport(320,480);
+
+      //lock orientation
+      AppMobi.device.setRotateOrientation("landscape");
+      AppMobi.device.setAutoRotate(false);
+
+      //manage power
+      AppMobi.device.managePower(true,false);
+      AppMobi.device.hideSplashScreen();
+
+      // Test function
+      //document.getElementById('debugging').textContent = AppMobi.testingStuff;
+      //document.getElementById('contentstuff').innerHTML = 'Running test function...';
+      //AppMobi.testingStuff(5, 'testingStuffCallback');
+
+      setupCAAT();
+    }
+    
+    </script>
+
+</head>
+
+
+<body onload="init();">
+
+  <canvas id="thecanvas"></canvas>
+
+  <script>
+  if (typeof(AppMobi) === "undefined") {
+      setupCAAT();
+    } else {
+      document.addEventListener("appMobi.device.ready",onDeviceReady,false);
+    }
+  </script>
+
+</html>
