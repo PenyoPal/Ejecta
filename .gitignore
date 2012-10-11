@@ -16,6 +16,7 @@ profile
 *.moved-aside
 DerivedData
 .idea/
+App/
 
 Ejecta.xcodeproj/xcuserdata/
 Ejecta.xcodeproj/project.xcworkspace/xcuserdata/
