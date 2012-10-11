@@ -395,6 +395,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "Ejecta" */;
 			buildPhases = (
+				1ADC68EB16265E5500D2E676 /* ShellScript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -456,6 +457,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1ADC68EB16265E5500D2E676 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/zsh;
+			shellScript = "#!/bin/zsh\n\n\ncd ${SRCROOT:-$(dirname $0)}\necho \"Build script running at $(pwd)\"\nAPP_SRC='../src'\nAPP_DEST='./App'\n\nmkdir -p \"$APP_DEST\"\n\nfor d in $(find \"$APP_SRC\" -type d -not -path \"$APP_SRC\"); do\nmkdir -p \"$APP_DEST/${d#$APP_SRC/}\"\ndone\n\nfor f in $(find \"$APP_SRC\" -type f -not -name '*.coffee'); do\ncp \"$f\" \"$APP_DEST/${f#$APP_SRC/}\"\ndone\n\nexec coffee -c -o \"$APP_DEST\" \"$APP_SRC\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		1D60588E0D05DD3D006BFB54 /* Sources */ = {
