@@ -68,6 +68,7 @@ window.localStorage = new Ejecta.LocalStorage();
 
 // Set up a "fake" HTMLElement
 HTMLElement = function( tagName ){
+	this._eventListeners = {};
 	this.tagName = tagName;
 	this.children = [];
 };
@@ -81,11 +82,30 @@ HTMLElement.prototype.appendChild = function( element ) {
 			ej.require( element.src );
 			if( element.onload ) {
 				element.onload();
+			} else if( element._eventListeners.load ) {
+				var evt = {type: 'load', srcElement: element};
+				element._eventListeners.load(evt);
+				delete element._eventListeners.load;
 			}
 		}, 1);
 	}
 };
 
+HTMLElement.prototype.setAttribute = function( key, value ) {
+	this[key] = value;
+};
+
+HTMLElement.prototype.getAttribute = function( key ) {
+	return this[key];
+};
+
+HTMLElement.prototype.addEventListener = function( event, handler, capture ) {
+	this._eventListeners[event] = handler;
+};
+
+HTMLElement.prototype.removeEventListener = function( event, handler, capture ) {
+	delete this._eventListeners[event];
+};
 
 // The document object
 window.document = {
