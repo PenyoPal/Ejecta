@@ -68,8 +68,9 @@ window.localStorage = new Ejecta.LocalStorage();
 
 // Set up a "fake" HTMLElement
 HTMLElement = function( tagName ){
-	this._eventListeners = {};
 	this.tagName = tagName;
+	this._eventListeners = {};
+	this._data_attrs = {};
 	this.children = [];
 };
 
@@ -92,11 +93,11 @@ HTMLElement.prototype.appendChild = function( element ) {
 };
 
 HTMLElement.prototype.setAttribute = function( key, value ) {
-	this[key] = value;
+	this._data_attrs[key] = value;
 };
 
 HTMLElement.prototype.getAttribute = function( key ) {
-	return this[key];
+	return this._data_attrs[key];
 };
 
 HTMLElement.prototype.addEventListener = function( event, handler, capture ) {
