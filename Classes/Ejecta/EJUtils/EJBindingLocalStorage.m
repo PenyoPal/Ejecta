@@ -126,7 +126,7 @@ EJ_BIND_FUNCTION(getItem, ctx, argc, argv ) {
 	
 	NSString * key = JSValueToNSString( ctx, argv[0] );
 	NSArray * vals = [self getFromLocalStorage:key];
-    NSString * value = @"";
+    NSString * value = nil;
     if (vals.count > 0) {
         value = [NSString stringWithString:[[vals objectAtIndex:0]
                                             valueForKey:@"value"]];
