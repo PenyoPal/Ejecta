@@ -49,12 +49,14 @@
                        predicateWithFormat:@"keyName == %@", key]];
     NSError *err;
     NSArray *results = [moc executeFetchRequest:req error:&err];
+    assert(results.count == 1 || results.count == 0);
     return results;
 }
 
 - (void)setInLocalStorage:(NSString *)value forKey:(NSString *)key
 {
     NSArray *existing = [self getFromLocalStorage:key];
+    assert(existing.count == 1 || existing.count == 0);
     if (existing.count > 0) {
         for (NSManagedObject *old in existing) {
             [moc deleteObject:old];
