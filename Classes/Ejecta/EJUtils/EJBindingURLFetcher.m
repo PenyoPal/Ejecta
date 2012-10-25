@@ -26,7 +26,7 @@
 
 
 #pragma mark -
-#pragma mark URL Connection delegates
+#pragma mark URL Connection delegate methods
 - (void)connection:(NSURLConnection *)connection
 didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
@@ -34,7 +34,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     NSURL *remoteUrl = connection.originalRequest.URL;
     NSArray *callbacks = [urlCallbacks objectForKey:remoteUrl];
     JSObjectRef callback;
-    [(NSValue*)callbacks[1] getValue:callback];
+    [(NSValue*)callbacks[1] getValue:&callback];
 
 
     if( callback ) {
@@ -58,7 +58,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     NSURL *remoteUrl = connection.originalRequest.URL;
     NSArray *callbacks = [urlCallbacks objectForKey:remoteUrl];
     JSObjectRef callback;
-    [(NSValue*)callbacks[0] getValue:callback];
+    [(NSValue*)callbacks[0] getValue:&callback];
 
 
     NSData *fetchedData = [requestData objectForKey:remoteUrl];
@@ -80,19 +80,19 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 #pragma mark -
 #pragma mark EJBinding
 EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
-    if (argc < 3) return NULL;
+    if (argc < 1) return NULL;
 
     NSURL *remoteUrl = [NSURL URLWithString:JSValueToNSString(ctx, argv[0])];
     JSObjectRef successCallback = NULL;
-	if( JSValueIsObject(ctx, argv[1]) ) {
+	if( argc > 1 && JSValueIsObject(ctx, argv[1]) ) {
 		successCallback = JSValueToObject(ctx, argv[1], NULL);
-	}
-    JSValueProtect(ctx, successCallback);
+        JSValueProtect(ctx, successCallback);
+    }
     JSObjectRef errorCallback = NULL;
-	if( JSValueIsObject(ctx, argv[2]) ) {
+	if( argc > 2 && JSValueIsObject(ctx, argv[2]) ) {
 		errorCallback = JSValueToObject(ctx, argv[2], NULL);
+        JSValueProtect(ctx, errorCallback);
 	}
-    JSValueProtect(ctx, errorCallback);
     
     NSURLRequest *req = [NSURLRequest requestWithURL:remoteUrl
                          cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -101,8 +101,8 @@ EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
                                                             delegate:self];
     NSArray *callbacks = [NSArray
                           arrayWithObjects:
-                          [NSValue value:successCallback withObjCType:@encode(JSObjectRef)],
-                          [NSValue value:errorCallback withObjCType:@encode(JSObjectRef)],
+                          [NSValue valueWithBytes:&successCallback objCType:@encode(JSObjectRef)],
+                          [NSValue valueWithBytes:&errorCallback objCType:@encode(JSObjectRef)],
                           nil];
     [urlCallbacks setObject:callbacks forKey:remoteUrl];
     [requestData setObject:[NSMutableData data] forKey:remoteUrl];
