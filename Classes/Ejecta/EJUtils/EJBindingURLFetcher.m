@@ -10,8 +10,7 @@
 
 @implementation EJBindingURLFetcher
 
-#pragma mark -
-#pragma mark Lifecycle
+#pragma mark - Lifecycle
 - (id)initWithContext:(JSContextRef)ctxp
                object:(JSObjectRef)obj
                  argc:(size_t)argc
@@ -25,8 +24,7 @@
 }
 
 
-#pragma mark -
-#pragma mark URL Connection delegate methods
+#pragma mark - NSURLConnectionDataDelegate
 - (void)connection:(NSURLConnection *)connection
 didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
@@ -77,8 +75,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     [requestData removeObjectForKey:remoteUrl];
 }
 
-#pragma mark -
-#pragma mark EJBinding
+#pragma mark - EJBinding
 EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
     if (argc < 1) return NULL;
 
