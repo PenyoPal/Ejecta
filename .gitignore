@@ -16,7 +16,7 @@ profile
 *.moved-aside
 DerivedData
 .idea/
-App/
 
-Ejecta.xcodeproj/xcuserdata/
-Ejecta.xcodeproj/project.xcworkspace/xcuserdata/
+# Ignoring App folder for
+# ease of implementation
+App

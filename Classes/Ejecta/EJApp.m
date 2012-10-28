@@ -14,27 +14,27 @@ JSValueRef ej_global_undefined;
 JSClassRef ej_constructorClass;
 JSValueRef ej_getNativeClass(JSContextRef ctx, JSObjectRef object, JSStringRef propertyNameJS, JSValueRef* exception) {
 	CFStringRef className = JSStringCopyCFString( kCFAllocatorDefault, propertyNameJS );
-
+	
 	JSObjectRef obj = NULL;
 	NSString * fullClassName = [NSString stringWithFormat:@"EJBinding%@", className];
 	id class = NSClassFromString(fullClassName);
 	if( class ) {
 		obj = JSObjectMake( ctx, ej_constructorClass, (void *)class );
 	}
-
+	
 	CFRelease(className);
 	return obj ? obj : ej_global_undefined;
 }
 
 JSObjectRef ej_callAsConstructor(JSContextRef ctx, JSObjectRef constructor, size_t argc, const JSValueRef argv[], JSValueRef* exception) {
 	id class = (id)JSObjectGetPrivate( constructor );
-
+	
 	JSClassRef jsClass = [[EJApp instance] getJSClassForClass:class];
 	JSObjectRef obj = JSObjectMake( ctx, jsClass, NULL );
-
+	
 	id instance = [(EJBindingBase *)[class alloc] initWithContext:ctx object:obj argc:argc argv:argv];
 	JSObjectSetPrivate( obj, (void *)instance );
-
+	
 	return obj;
 }
 
@@ -64,61 +64,63 @@ static EJApp * ejectaInstance = NULL;
 
 - (id)initWithWindow:(UIWindow *)windowp {
 	if( self = [super init] ) {
-
+		
 		landscapeMode = [[[[NSBundle mainBundle] infoDictionary]
 			objectForKey:@"UIInterfaceOrientation"] hasPrefix:@"UIInterfaceOrientationLandscape"];
-
-
+		
+	
 		ejectaInstance = self;
 		window = windowp;
 		[window setRootViewController:self];
 		[UIApplication sharedApplication].idleTimerDisabled = YES;
-
-
+		
+		
 		// Show the loading screen - commented out for now.
-		// This causes some visual quirks on different devices, as the launch screen may be a
+		// This causes some visual quirks on different devices, as the launch screen may be a 
 		// different one than we loade here - let's rather show a black screen for 200ms...
 		//NSString * loadingScreenName = [EJApp landscapeMode] ? @"Default-Landscape.png" : @"Default-Portrait.png";
 		//loadingScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:loadingScreenName]];
 		//loadingScreen.frame = self.view.bounds;
 		//[self.view addSubview:loadingScreen];
-
+		
 		paused = false;
 		internalScaling = 1;
-
-
+		
+		// Limit all background operations (image & sound loading) to one thread
 		opQueue = [[NSOperationQueue alloc] init];
+		opQueue.maxConcurrentOperationCount = 1;
+		
 		timers = [[EJTimerCollection alloc] init];
-
+		
 		displayLink = [[CADisplayLink displayLinkWithTarget:self selector:@selector(run:)] retain];
 		[displayLink setFrameInterval:1];
 		[displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-
-
+		
+				
 		// Create the global JS context and attach the 'Ejecta' object
 		jsClasses = [[NSMutableDictionary alloc] init];
-
+		
 		JSClassDefinition constructorClassDef = kJSClassDefinitionEmpty;
 		constructorClassDef.callAsConstructor = ej_callAsConstructor;
 		ej_constructorClass = JSClassCreate(&constructorClassDef);
-
+		
 		JSClassDefinition globalClassDef = kJSClassDefinitionEmpty;
-		globalClassDef.getProperty = ej_getNativeClass;
+		globalClassDef.getProperty = ej_getNativeClass;		
 		JSClassRef globalClass = JSClassCreate(&globalClassDef);
-
-
+		
+		
 		jsGlobalContext = JSGlobalContextCreate(NULL);
 		ej_global_undefined = JSValueMakeUndefined(jsGlobalContext);
 		JSValueProtect(jsGlobalContext, ej_global_undefined);
 		JSObjectRef globalObject = JSContextGetGlobalObject(jsGlobalContext);
-
+		
 		JSObjectRef iosObject = JSObjectMake( jsGlobalContext, globalClass, NULL );
 		JSObjectSetProperty(
-			jsGlobalContext, globalObject,
-			JSStringCreateWithUTF8CString("Ejecta"), iosObject,
+			jsGlobalContext, globalObject, 
+			JSStringCreateWithUTF8CString("Ejecta"), iosObject, 
 			kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly, NULL
 		);
-
+		
 		// Load the initial JavaScript source files
 		[self loadScriptAtPath:EJECTA_BOOT_JS];
 		[self loadScriptAtPath:EJECTA_MAIN_JS];
@@ -133,7 +135,7 @@ static EJApp * ejectaInstance = NULL;
 	[touchDelegate release];
 	[jsClasses release];
 	[opQueue release];
-
+	
 	[displayLink release];
 	[timers release];
 	[super dealloc];
@@ -174,7 +176,7 @@ static EJApp * ejectaInstance = NULL;
 
 	// Check all timers
 	[timers update];
-
+	
 	// Redraw the canvas
 	self.currentRenderingContext = screenRenderingContext;
 	[screenRenderingContext present];
@@ -214,19 +216,17 @@ static EJApp * ejectaInstance = NULL;
 // Script loading and execution
 
 - (void)loadScriptAtPath:(NSString *)path {
-	NSError *err;
-	NSString * script = [NSString stringWithContentsOfFile:[self pathForResource:path] encoding:NSUTF8StringEncoding error:&err];
-
+	NSString * script = [NSString stringWithContentsOfFile:[self pathForResource:path] encoding:NSUTF8StringEncoding error:NULL];
+	
 	if( !script ) {
 		NSLog(@"Error: Can't Find Script %@", path );
-		NSLog(@"%@", err.localizedDescription);
 		return;
 	}
-
+	
 	NSLog(@"Loading Script: %@", path );
 	JSStringRef scriptJS = JSStringCreateWithCFString((CFStringRef)script);
 	JSStringRef pathJS = JSStringCreateWithCFString((CFStringRef)path);
-
+	
 	JSValueRef exception = NULL;
 	JSEvaluateScript( jsGlobalContext, scriptJS, NULL, pathJS, 0, &exception );
 	[self logException:exception ctx:jsGlobalContext];
@@ -243,7 +243,7 @@ static EJApp * ejectaInstance = NULL;
 
 - (JSClassRef)getJSClassForClass:(id)classId {
 	JSClassRef jsClass = [[jsClasses objectForKey:classId] pointerValue];
-
+	
 	// Not already loaded? Ask the objc class for the JSClassRef!
 	if( !jsClass ) {
 		jsClass = [classId getJSClass];
@@ -254,21 +254,21 @@ static EJApp * ejectaInstance = NULL;
 
 - (void)logException:(JSValueRef)exception ctx:(JSContextRef)ctxp {
 	if( !exception ) return;
-
+	
 	JSStringRef jsLinePropertyName = JSStringCreateWithUTF8CString("line");
 	JSStringRef jsFilePropertyName = JSStringCreateWithUTF8CString("sourceURL");
-
+	
 	JSObjectRef exObject = JSValueToObject( ctxp, exception, NULL );
 	JSValueRef line = JSObjectGetProperty( ctxp, exObject, jsLinePropertyName, NULL );
 	JSValueRef file = JSObjectGetProperty( ctxp, exObject, jsFilePropertyName, NULL );
-
-	NSLog(
-		@"%@ at line %@ in %@",
+	
+	NSLog( 
+		@"%@ at line %@ in %@", 
 		JSValueToNSString( ctxp, exception ),
 		JSValueToNSString( ctxp, line ),
 		JSValueToNSString( ctxp, file )
 	);
-
+	
 	JSStringRelease( jsLinePropertyName );
 	JSStringRelease( jsFilePropertyName );
 }
@@ -302,22 +302,22 @@ static EJApp * ejectaInstance = NULL;
 	if( argc != 2 || !JSValueIsObject(ctxp, argv[0]) || !JSValueIsNumber(jsGlobalContext, argv[1]) ) {
 		return NULL;
 	}
-
+	
 	JSObjectRef func = JSValueToObject(ctxp, argv[0], NULL);
 	float interval = JSValueToNumberFast(ctxp, argv[1])/1000;
-
+	
 	// Make sure short intervals (< 18ms) run each frame
 	if( interval < 0.018 ) {
 		interval = 0;
 	}
-
+	
 	int timerId = [timers scheduleCallback:func interval:interval repeat:repeat];
 	return JSValueMakeNumber( ctxp, timerId );
 }
 
 - (JSValueRef)deleteTimer:(JSContextRef)ctxp argc:(size_t)argc argv:(const JSValueRef [])argv {
 	if( argc != 1 || !JSValueIsNumber(ctxp, argv[0]) ) return NULL;
-
+	
 	[timers cancelId:JSValueToNumberFast(ctxp, argv[0])];
 	return NULL;
 }

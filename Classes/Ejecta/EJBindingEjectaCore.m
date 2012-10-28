@@ -1,5 +1,8 @@
 #import "EJBindingEjectaCore.h"
 
+#import <netinet/in.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+
 @implementation EJBindingEjectaCore
 
 EJ_BIND_FUNCTION(log, ctx, argc, argv ) {
@@ -14,6 +17,26 @@ EJ_BIND_FUNCTION(require, ctx, argc, argv ) {
 
 	[[EJApp instance] loadScriptAtPath:JSValueToNSString(ctx, argv[0])];
 	return NULL;
+}
+
+EJ_BIND_FUNCTION(loadText, ctx, argc, argv) {
+	if( argc < 1 ) { return NULL; }
+	
+	NSString * path = [[EJApp instance] pathForResource:JSValueToNSString(ctx, argv[0])];
+	NSString * text = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
+	return NSStringToJSValue(ctx, text);
+}
+
+EJ_BIND_FUNCTION(loadJSON, ctx, argc, argv) {
+	if( argc < 1 ) { return NULL; }
+	
+	NSString * path = [[EJApp instance] pathForResource:JSValueToNSString(ctx, argv[0])];
+	NSString * text = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:NULL];
+	
+	JSStringRef jsText = JSStringCreateWithCFString((CFStringRef)text);;
+	JSValueRef json = JSValueMakeFromJSONString(ctx, jsText);
+	JSStringRelease(jsText);
+	return json;
 }
 
 EJ_BIND_FUNCTION(openURL, ctx, argc, argv ) {
@@ -91,6 +114,42 @@ EJ_BIND_GET(userAgent, ctx ) {
 
 EJ_BIND_GET(appVersion, ctx ) {
 	return NSStringToJSValue( ctx, EJECTA_VERSION );
+}
+
+EJ_BIND_GET(onLine, ctx) {
+	struct sockaddr_in zeroAddress;
+    bzero(&zeroAddress, sizeof(zeroAddress));
+    zeroAddress.sin_len = sizeof(zeroAddress);
+    zeroAddress.sin_family = AF_INET;
+	
+	SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithAddress(
+		kCFAllocatorDefault,
+		(const struct sockaddr*)&zeroAddress
+	);
+	if( reachability ) {
+		SCNetworkReachabilityFlags flags;
+		SCNetworkReachabilityGetFlags(reachability, &flags);
+		
+		CFRelease(reachability);
+		
+		if(
+			// Reachable and no connection required
+			(
+				(flags & kSCNetworkReachabilityFlagsReachable) &&
+				!(flags & kSCNetworkReachabilityFlagsConnectionRequired)
+			) ||
+			// or connection can be established without user intervention
+			(
+				(flags & kSCNetworkReachabilityFlagsConnectionOnDemand) &&
+				(flags & kSCNetworkReachabilityFlagsConnectionOnTraffic) &&
+				!(flags & kSCNetworkReachabilityFlagsInterventionRequired)
+			)
+		) {
+			return JSValueMakeBoolean(ctx, true);
+		}
+	}
+	
+	return JSValueMakeBoolean(ctx, false);
 }
 
 @end

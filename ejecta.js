@@ -24,7 +24,8 @@ window.screen = {
 
 window.navigator = {
 	userAgent: ej.userAgent,
-	appVersion: ej.appVersion
+	appVersion: ej.appVersion,
+	get onLine() { return ej.onLine; } // re-evaluate on each get
 };
 
 // Create the default screen canvas
@@ -60,9 +61,10 @@ window.clearInterval = function(id){ return ej.clearInterval(id); };
 window.requestAnimationFrame = function(cb, element){ return ej.setTimeout(cb, 16); };
 
 
-// The native Image, Audio and LocalStorage class mimic the real elements
+// The native Image, Audio, HttpRequest and LocalStorage class mimic the real elements
 window.Image = Ejecta.Image;
 window.Audio = Ejecta.Audio;
+window.XMLHttpRequest = Ejecta.HttpRequest;
 window.localStorage = new Ejecta.LocalStorage();
 
 
