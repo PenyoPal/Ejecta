@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */; };
 		1D3623260D0F684500981E51 /* EjectaAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* EjectaAppDelegate.m */; };
@@ -70,6 +71,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A00DC4B16387B58000B3025 /* EJBindingURLFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingURLFetcher.h; sourceTree = "<group>"; };
+		1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingURLFetcher.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -398,6 +401,8 @@
 				1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */,
 				B6074FEF15F77AD600D987F9 /* EJBindingGameCenter.h */,
 				B6074FF015F77AD600D987F9 /* EJBindingGameCenter.m */,
+				1A00DC4B16387B58000B3025 /* EJBindingURLFetcher.h */,
+				1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */,
 				B600945B162763EF005B4F9C /* EJBindingHttpRequest.h */,
 				B600945C162763F0005B4F9C /* EJBindingHttpRequest.m */,
 			);
@@ -526,6 +531,7 @@
 				5B7B76711619A71000691910 /* EJFont.m in Sources */,
 				B60094591625EFEB005B4F9C /* EJOpenALBuffer.m in Sources */,
 				1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */,
+				1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */,
 				B600945D162763F1005B4F9C /* EJBindingHttpRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
