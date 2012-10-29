@@ -49,6 +49,7 @@
                        predicateWithFormat:@"keyName == %@", key]];
     NSError *err;
     NSArray *results = [moc executeFetchRequest:req error:&err];
+    [req release];
     assert(results.count == 1 || results.count == 0);
     return results;
 }
@@ -106,6 +107,7 @@
     if (![fm removeItemAtURL:storeUrl error:&err]) {
         NSLog(@"Failed to delete old store file: %@", err.localizedDescription);
     }
+    [fm release];
 
     NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles:nil];
     psc = [[NSPersistentStoreCoordinator alloc]
