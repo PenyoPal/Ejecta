@@ -29,6 +29,7 @@
 didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     [connection cancel];
+    [connection release];
     NSURL *remoteUrl = connection.originalRequest.URL;
     NSArray *callbacks = [urlCallbacks objectForKey:remoteUrl];
     JSObjectRef callback;
@@ -71,8 +72,10 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
         JSValueUnprotect(gctx, callback);
     }
 
+    [data release];
     [urlCallbacks removeObjectForKey:remoteUrl];
     [requestData removeObjectForKey:remoteUrl];
+    [connection release];
 }
 
 #pragma mark - EJBinding
