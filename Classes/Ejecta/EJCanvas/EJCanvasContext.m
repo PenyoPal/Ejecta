@@ -1,6 +1,11 @@
 #import "EJCanvasContext.h"
 #import "EJFont.h"
 
+@interface EJCanvasContext()
+- (void)clipToPath:(EJPath*)cpath;
+- (void)stopClipping;
+@end
+
 @implementation EJCanvasContext
 
 EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
@@ -26,10 +31,12 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		state->textBaseline = kEJTextBaselineAlphabetic;
 		state->textAlign = kEJTextAlignStart;
 		state->font = [[UIFont fontWithName:@"Helvetica" size:10] retain];
+        state->clippingEnabled = NO;
+		state->clippingPath = nil;
 		
 		bufferWidth = viewportWidth = width = widthp;
 		bufferHeight = viewportHeight = height = heightp;
-		
+
 		path = [[EJPath alloc] init];
 		backingStoreRatio = 1;
 		
@@ -120,7 +127,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 	EJCompositeOperation op = state->globalCompositeOperation;
 	glBlendFunc( EJCompositeOperationFuncs[op].source, EJCompositeOperationFuncs[op].destination );
 	glDisable(GL_TEXTURE_2D);
@@ -209,7 +216,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	if( vertexBufferIndex >= EJ_CANVAS_VERTEX_BUFFER_SIZE - 6 ) {
 		[self flushBuffers];
 	}
-	
+
 	EJVector2 d11 = { x, y };
 	EJVector2 d21 = { x+w, y };
 	EJVector2 d12 = { x, y+h };
@@ -236,7 +243,6 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 
 - (void)flushBuffers {
 	if( vertexBufferIndex == 0 ) { return; }
-	
 	glDrawArrays(GL_TRIANGLES, 0, vertexBufferIndex);
 	vertexBufferIndex = 0;
 }
@@ -288,6 +294,11 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
     
 	if( state->globalCompositeOperation != oldCompositeOp ) {
 		self.globalCompositeOperation = state->globalCompositeOperation;
+	}
+    if (state->clippingEnabled) {
+		[self clipToPath:state->clippingPath];
+    } else {
+		[self stopClipping];
 	}
 }
 
@@ -392,7 +403,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	[path close];
 }
 
-- (void)fill {	
+- (void)fill {
 	[path drawPolygonsToContext:self];
 }
 
@@ -461,6 +472,55 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 - (float)measureText:(NSString *)text {
 	EJFont *font = [self acquireFont:state->font.fontName size:state->font.pointSize fill:YES contentScale:backingStoreRatio];
 	return [font measureString:text];
+}
+
+- (void)clipToPath:(EJPath*)cpath
+{
+	[self flushBuffers];
+	[self createStencilBufferOnce];
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+	glEnable(GL_STENCIL_TEST);
+	glStencilMask(0x01 << 7);
+	glClearStencil(0);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+	glStencilFunc(GL_ALWAYS, 0x01 << 7, 0x01 << 7);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+	CGRect bounds = CGPathGetPathBoundingBox(cpath.cgPath);
+	[self pushRectX:bounds.origin.x y:bounds.origin.y w:bounds.size.width
+				  h:bounds.size.height tx:0 ty:0 tw:0 th:0 color:state->fillColor
+	  withTransform:CGAffineTransformIdentity];
+	[self flushBuffers];
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	glStencilFunc(GL_EQUAL, 0x01 << 7, 0x01 << 7);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
+}
+
+- (void)stopClipping
+{
+	glDisable(GL_STENCIL_TEST);
+	if (state->clippingPath) {
+		[state->clippingPath release];
+	}
+	state->clippingPath = nil;
+}
+
+- (void)clip
+{
+	if (CGPathIsEmpty(path.cgPath)) {
+		state->clippingEnabled = NO;
+		[self stopClipping];
+	} else {
+		state->clippingEnabled = YES;
+		state->clippingPath = path;
+		[state->clippingPath retain];
+		[self clipToPath:path];
+	}
 }
 
 @end

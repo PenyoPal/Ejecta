@@ -75,6 +75,8 @@ typedef struct {
 	EJTextAlign textAlign;
 	EJTextBaseline textBaseline;
 	UIFont * font;
+    BOOL clippingEnabled;
+	EJPath * clippingPath;
 } EJCanvasState;
 
 
@@ -91,7 +93,7 @@ typedef struct {
 	int msaaSamples;
 	
 	EJTexture * currentTexture;
-	
+
 	EJPath * path;
 	
 	int vertexBufferIndex;
@@ -149,6 +151,7 @@ typedef struct {
 - (void)quadraticCurveToCpx:(float)cpx cpy:(float)cpy x:(float)x y:(float)y;
 - (void)arcToX1:(float)x1 y1:(float)y1 x2:(float)x2 y2:(float)y2 radius:(float)radius;
 - (void)arcX:(float)x y:(float)y radius:(float)radius startAngle:(float)startAngle endAngle:(float)endAngle antiClockwise:(BOOL)antiClockwise;
+- (void)clip;
 
 - (void)fillText:(NSString *)text x:(float)x y:(float)y;
 - (void)strokeText:(NSString *)text x:(float)x y:(float)y;
@@ -169,7 +172,6 @@ typedef struct {
 	shadowOffsetY
 	shadowBlur
 	shadowColor
-	clip()
 	isPointInPath(x, y)
 */
 @end
