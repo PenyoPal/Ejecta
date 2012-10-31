@@ -20,9 +20,11 @@
 	float distanceTolerance;
     
     CGAffineTransform transform;
+    CGMutablePathRef cgPath;
 }
 
-@property (nonatomic,assign) CGAffineTransform transform;;
+@property (nonatomic,assign) CGAffineTransform transform;
+@property (nonatomic,readonly) CGPathRef cgPath;
 
 - (void)reset;
 - (void)close;
