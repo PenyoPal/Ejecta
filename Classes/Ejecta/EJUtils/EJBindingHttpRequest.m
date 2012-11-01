@@ -174,8 +174,13 @@ EJ_BIND_FUNCTION(send, ctx, argc, argv) {
 	if( !method || !url ) { return NULL; }
 	
 	[self clearConnection];
+
+	NSURL *remoteUrl = [NSURL URLWithString:url];
+	if (![remoteUrl host]) { // No host => local file
+		remoteUrl = [NSURL fileURLWithPath:[[EJApp instance] pathForResource:url]];
+	}
 	
-	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:remoteUrl];
 	[request setHTTPMethod:method];
 	
 	for( NSString * header in requestHeaders ) {
