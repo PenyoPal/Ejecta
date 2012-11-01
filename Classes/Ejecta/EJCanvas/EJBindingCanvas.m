@@ -1,6 +1,7 @@
 #import "EJBindingCanvas.h"
 #import "EJBindingImageData.h"
-
+#import "EJBindingImage.h"
+#import "EJBindingCanvasPattern.h"
 
 @implementation EJBindingCanvas
 
@@ -56,11 +57,26 @@ EJ_BIND_ENUM(textBaseline, EJTextBaselineNames, renderingContext.state->textBase
 EJ_BIND_ENUM(scalingMode, EJScalingModeNames, scalingMode);
 
 EJ_BIND_GET(fillStyle, ctx ) {
+	if (renderingContext.state->fillWithPattern) {
+		JSClassRef patternClass = [[EJApp instance] getJSClassForClass:[EJBindingCanvasPattern class]];
+		JSObjectRef obj = JSObjectMake( ctx, patternClass, NULL );
+		JSValueProtect(ctx, obj);
+
+		JSObjectSetPrivate( obj, (void *)renderingContext.state->fillPattern );
+		JSValueUnprotect(ctx, obj);
+		return obj;
+	}
 	return ColorRGBAToJSValue(ctx, renderingContext.state->fillColor);
 }
 
 EJ_BIND_SET(fillStyle, ctx, value) {
-	renderingContext.state->fillColor = JSValueToColorRGBA(ctx, value);
+	if (JSValueIsObject(ctx, value)) {
+		renderingContext.state->fillPattern = (EJBindingCanvasPattern*)JSObjectGetPrivate((JSObjectRef)value);
+		renderingContext.state->fillWithPattern = YES;
+	} else {
+		renderingContext.state->fillColor = JSValueToColorRGBA(ctx, value);
+		renderingContext.state->fillWithPattern = NO;
+	}
 }
 
 EJ_BIND_GET(strokeStyle, ctx ) {
@@ -584,9 +600,34 @@ EJ_BIND_FUNCTION(clip, ctx, argc, argv) {
     return NULL;
 }
 
+EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
+	if (argc < 1) {	return NULL; }
+	EJBindingImage * jsImage = (EJBindingImage *)JSObjectGetPrivate((JSObjectRef)argv[0]);
+	NSString *repetition = @"repeat";
+	if (argc >= 2) {
+		repetition = JSValueToNSString(ctx, argv[1]);
+	}
+
+	// Create the JS object
+	JSClassRef patternClass = [[EJApp instance] getJSClassForClass:[EJBindingCanvasPattern class]];
+	JSObjectRef obj = JSObjectMake( ctx, patternClass, NULL );
+	JSValueProtect(ctx, obj);
+
+	// Create the native instance
+	EJBindingCanvasPattern * pat = [[EJBindingCanvasPattern alloc]
+									initWithContext:ctx
+									object:obj
+									imageData:jsImage
+									repetition:repetition];
+
+	// Attach the native instance to the js object
+	JSObjectSetPrivate( obj, (void *)pat );
+	JSValueUnprotect(ctx, obj);
+	return obj;
+}
+
 EJ_BIND_FUNCTION_NOT_IMPLEMENTED( createRadialGradient );
 EJ_BIND_FUNCTION_NOT_IMPLEMENTED( createLinearGradient );
-EJ_BIND_FUNCTION_NOT_IMPLEMENTED( createPattern );
 EJ_BIND_FUNCTION_NOT_IMPLEMENTED( isPointInPath );
 
 @end

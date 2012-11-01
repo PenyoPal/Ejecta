@@ -4,6 +4,8 @@
 #import "EJPath.h"
 #import "EJCanvasTypes.h"
 
+@class EJBindingCanvasPattern;
+
 #define EJ_CANVAS_STATE_STACK_SIZE 16
 #define EJ_CANVAS_VERTEX_BUFFER_SIZE 2048
 
@@ -64,6 +66,8 @@ typedef struct {
 	
 	EJCompositeOperation globalCompositeOperation;
 	EJColorRGBA fillColor;
+	EJBindingCanvasPattern *fillPattern;
+	BOOL fillWithPattern;
 	EJColorRGBA strokeColor;
 	float globalAlpha;
 	
@@ -77,6 +81,7 @@ typedef struct {
 	UIFont * font;
     BOOL clippingEnabled;
 	EJPath * clippingPath;
+
 } EJCanvasState;
 
 
@@ -167,7 +172,6 @@ typedef struct {
 /* TODO: not yet implemented:
 	createLinearGradient(x0, y0, x1, y1)
 	createRadialGradient(x0, y0, r0, x1, y1, r1)
-	createPattern(image, repetition)
 	shadowOffsetX
 	shadowOffsetY
 	shadowBlur

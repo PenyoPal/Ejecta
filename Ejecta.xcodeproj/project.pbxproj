@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */; };
+		1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */; };
 		1D3623260D0F684500981E51 /* EjectaAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* EjectaAppDelegate.m */; };
@@ -73,6 +74,8 @@
 /* Begin PBXFileReference section */
 		1A00DC4B16387B58000B3025 /* EJBindingURLFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingURLFetcher.h; sourceTree = "<group>"; };
 		1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingURLFetcher.m; sourceTree = "<group>"; };
+		1A5C21A016420A9600A8A35F /* EJBindingCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingCanvasPattern.h; sourceTree = "<group>"; };
+		1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingCanvasPattern.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -336,6 +339,8 @@
 			children = (
 				B615E8C915E2D3F70087729A /* EJBindingCanvas.h */,
 				B615E8CA15E2D3F70087729A /* EJBindingCanvas.m */,
+				1A5C21A016420A9600A8A35F /* EJBindingCanvasPattern.h */,
+				1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */,
 				B615E8CB15E2D3F70087729A /* EJBindingImage.h */,
 				B615E8CC15E2D3F70087729A /* EJBindingImage.m */,
 				B615E8CD15E2D3F70087729A /* EJBindingImageData.h */,
@@ -533,6 +538,7 @@
 				1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */,
 				1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */,
 				B600945D162763F1005B4F9C /* EJBindingHttpRequest.m in Sources */,
+				1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +551,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -567,6 +574,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMPRESS_PNG_FILES = NO;
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Ejecta_Prefix.pch;
 				INFOPLIST_FILE = "Ejecta-Info.plist";
@@ -588,6 +596,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = NS_BLOCK_ASSERTIONS;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -607,6 +616,7 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;

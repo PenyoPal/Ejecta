@@ -1,5 +1,6 @@
 #import "EJCanvasContext.h"
 #import "EJFont.h"
+#import "EJBindingCanvasPattern.h"
 
 @interface EJCanvasContext()
 - (void)clipToPath:(EJPath*)cpath;
@@ -33,6 +34,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		state->font = [[UIFont fontWithName:@"Helvetica" size:10] retain];
         state->clippingEnabled = NO;
 		state->clippingPath = nil;
+		state->fillWithPattern = NO;
 		
 		bufferWidth = viewportWidth = width = widthp;
 		bufferHeight = viewportHeight = height = heightp;
@@ -340,10 +342,49 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 
 - (void)fillRectX:(float)x y:(float)y w:(float)w h:(float)h {
 	[self setTexture:NULL];
-	
+
 	EJColorRGBA color = state->fillColor;
 	color.rgba.a = (float)color.rgba.a * state->globalAlpha;
-	[self pushRectX:x y:y w:w h:h tx:0 ty:0 tw:0 th:0 color:color withTransform:state->transform];
+	float tx = 0, ty = 0, tw = 0, th = 0;
+	if (state->fillWithPattern) {
+		[self flushBuffers];
+		[self setTexture:state->fillPattern.texture];
+		color.hex = 0xffffffff;
+		GLint xRepeat, yRepeat;
+		switch (state->fillPattern.repetitionType) {
+			case REPEAT_Y:
+				xRepeat = GL_CLAMP_TO_EDGE;
+				yRepeat = GL_REPEAT;
+				w = state->fillPattern.texture.realWidth;
+				break;
+			case REPEAT_X:
+				xRepeat = GL_REPEAT;
+				yRepeat = GL_CLAMP_TO_EDGE;
+				h = state->fillPattern.texture.realHeight;
+				break;
+			case REPEAT_NONE:
+				yRepeat = GL_CLAMP_TO_EDGE;
+				xRepeat = GL_CLAMP_TO_EDGE;
+				h = state->fillPattern.texture.realHeight;
+				w = state->fillPattern.texture.realWidth;
+				break;
+			case REPEAT:
+			default:
+				xRepeat = yRepeat = GL_REPEAT;
+				break;
+		}
+		tw = w / state->fillPattern.texture.realWidth;
+		th = h / state->fillPattern.texture.realHeight;
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, xRepeat);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, yRepeat);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	[self pushRectX:x y:y w:w h:h tx:tx ty:ty tw:tw th:th color:color withTransform:state->transform];
+	if (state->fillWithPattern) {
+		[self flushBuffers];
+		[self setTexture:NULL];
+	}
 }
 
 - (void)strokeRectX:(float)x y:(float)y w:(float)w h:(float)h {
@@ -489,8 +530,9 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 	CGRect bounds = CGPathGetPathBoundingBox(cpath.cgPath);
+	static EJColorRGBA white = {.hex = 0xffffffff};
 	[self pushRectX:bounds.origin.x y:bounds.origin.y w:bounds.size.width
-				  h:bounds.size.height tx:0 ty:0 tw:0 th:0 color:state->fillColor
+				  h:bounds.size.height tx:0 ty:0 tw:0 th:0 color:white
 	  withTransform:CGAffineTransformIdentity];
 	[self flushBuffers];
 
