@@ -88,7 +88,14 @@
 	state = kEJHttpRequestStateHeadersReceived;
 
 	[response release];
-	response = (NSHTTPURLResponse *)[responsep retain];
+	if ([responsep respondsToSelector:@selector(statusCode)]) {
+		response = (NSHTTPURLResponse *)[responsep retain];
+	} else { // Was a local file:// url
+		response = [[NSHTTPURLResponse alloc] initWithURL:[responsep URL]
+											   statusCode:200
+											  HTTPVersion:@"1.1"
+											 headerFields:[NSDictionary dictionary]];
+	}
 	[self triggerEvent:@"progress" argc:0 argv:NULL];
 	[self triggerEvent:@"readystatechange" argc:0 argv:NULL];
 }
@@ -206,7 +213,15 @@ EJ_BIND_FUNCTION(send, ctx, argc, argv) {
 		connection = [[NSURLConnection alloc] initWithRequest:request
 		                                             delegate:self
 		                                     startImmediately:NO];
-		[connection setDelegateQueue:[EJApp instance].opQueue];
+		if ([[[UIDevice currentDevice] systemVersion] intValue] < 6) {
+			// setDelegateQueue is broken on iOS 5
+			NSLog(@"OS version < iOS 6 (%@)", [[UIDevice currentDevice] systemVersion]);
+			[connection scheduleInRunLoop:[NSRunLoop currentRunLoop]
+								  forMode:NSRunLoopCommonModes];
+		} else {
+			NSLog(@"OS version >= iOS 6 (%@)", [[UIDevice currentDevice] systemVersion]);
+			[connection setDelegateQueue:[EJApp instance].opQueue];
+		}
 		[connection start];
 	}
 	else {
@@ -258,6 +273,7 @@ EJ_BIND_GET(statusText, ctx) {
 	if( !response ) { return NULL; }
 
 	// FIXME: should be "200 OK" instead of just "200"
+	// NB. iOS 6 has +[NSString localizedStringForStatusCode:]
 	NSString * code = [NSString stringWithFormat:@"%d", response.statusCode];
 	return NSStringToJSValue(ctx, code);
 }
