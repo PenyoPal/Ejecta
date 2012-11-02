@@ -89,7 +89,15 @@
 
 - (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
 	ended = true;
-	[self triggerEvent:@"ended" argc:0 argv:NULL];
+	JSContextRef ctx = [EJApp instance].jsGlobalContext;
+	JSObjectRef obj = JSObjectMake(ctx, NULL, NULL);
+	JSStringRef targetStr = JSStringCreateWithUTF8CString("target");
+	JSClassRef audioClass = [[EJApp instance] getJSClassForClass:[EJBindingAudio class]];
+	JSObjectRef src = JSObjectMake( ctx, audioClass, NULL );
+	JSObjectSetPrivate(src, (void*)self);
+	JSObjectSetProperty(ctx, obj, targetStr, src, kJSPropertyAttributeNone, nil);
+	JSValueRef args[1] = { obj };
+	[self triggerEvent:@"ended" argc:1 argv:args];
 }
 
 - (void)setPreload:(EJAudioPreload)preloadp {
