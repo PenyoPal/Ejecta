@@ -212,17 +212,7 @@ EJ_BIND_FUNCTION(send, ctx, argc, argv) {
 		state = kEJHttpRequestStateLoading;
 		connection = [[NSURLConnection alloc] initWithRequest:request
 		                                             delegate:self
-		                                     startImmediately:NO];
-		if ([[[UIDevice currentDevice] systemVersion] intValue] < 6) {
-			// setDelegateQueue is broken on iOS 5
-			NSLog(@"OS version < iOS 6 (%@)", [[UIDevice currentDevice] systemVersion]);
-			[connection scheduleInRunLoop:[NSRunLoop currentRunLoop]
-								  forMode:NSRunLoopCommonModes];
-		} else {
-			NSLog(@"OS version >= iOS 6 (%@)", [[UIDevice currentDevice] systemVersion]);
-			[connection setDelegateQueue:[EJApp instance].opQueue];
-		}
-		[connection start];
+		                                     startImmediately:YES];
 	}
 	else {
 		NSData * data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
