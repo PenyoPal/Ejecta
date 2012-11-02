@@ -88,7 +88,7 @@ static EJApp * ejectaInstance = NULL;
 		
 		// Limit all background operations (image & sound loading) to one thread
 		opQueue = [[NSOperationQueue alloc] init];
-		opQueue.maxConcurrentOperationCount = 1;
+		opQueue.maxConcurrentOperationCount = 2;
 		
 		timers = [[EJTimerCollection alloc] init];
 		
