@@ -618,6 +618,7 @@ EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
 	JSObjectSetPrivate( obj, (void *)pat );
 	JSValueUnprotect(ctx, obj);
 	return obj;
+}
 
 EJ_BIND_FUNCTION( clip, ctx, argc, argv ) {
 	ejectaInstance.currentRenderingContext = renderingContext;
