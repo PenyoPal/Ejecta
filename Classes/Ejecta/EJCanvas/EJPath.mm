@@ -14,17 +14,16 @@ typedef std::vector<subpath_t> path_t;
 }
 @end
 
+
 @implementation EJPath
 
 @synthesize transform;
-@synthesize cgPath;
 
 - (id)init {
 	self = [super init];
 	if(self) {
 		transform	= CGAffineTransformIdentity;
 		stencilMask = 0x1;
-		cgPath = CGPathCreateMutable();
 	}
 	return self;
 }
@@ -32,7 +31,6 @@ typedef std::vector<subpath_t> path_t;
 - (void)dealloc {
 	if( vertexBuffer ) {
 		free(vertexBuffer);
-		CGPathRelease(cgPath);
 	}
 	[super dealloc];
 }
@@ -53,8 +51,6 @@ typedef std::vector<subpath_t> path_t;
 	longestSubpath = 0;
 	paths.clear();
 	currentPath.clear();
-	CGPathRelease(cgPath);
-	cgPath = CGPathCreateMutable();
 	
 	currentPos = EJVector2Make( 0, 0 );
 	startPos = EJVector2Make( 0, 0 );
@@ -66,7 +62,6 @@ typedef std::vector<subpath_t> path_t;
 		currentPos = startPos;
 	}
 	[self endSubPath];
-	CGPathCloseSubpath(cgPath);
 }
 
 - (void)endSubPath {
@@ -83,13 +78,11 @@ typedef std::vector<subpath_t> path_t;
 	[self endSubPath];
 	currentPos = startPos = EJVector2ApplyTransform( EJVector2Make( x, y ), transform);
 	currentPath.push_back(currentPos);
-	CGPathMoveToPoint(cgPath, &transform, x, y);
 }
 
 - (void)lineToX:(float)x y:(float)y {
 	currentPos = EJVector2ApplyTransform( EJVector2Make(x, y), transform);
 	currentPath.push_back(currentPos);
-	CGPathAddLineToPoint(cgPath, &transform, x, y);
 }
 
 - (void)bezierCurveToCpx1:(float)cpx1 cpy1:(float)cpy1 cpx2:(float)cpx2 cpy2:(float)cpy2 x:(float)x y:(float)y scale:(float)scale {
@@ -103,7 +96,6 @@ typedef std::vector<subpath_t> path_t;
 	[self recursiveBezierX1:currentPos.x y1:currentPos.y x2:cp1.x y2:cp1.y x3:cp2.x y3:cp2.y x4:p.x y4:p.y level:0];
 	currentPos = p;
 	currentPath.push_back(currentPos);
-	CGPathAddCurveToPoint(cgPath, &transform, cpx1, cpy1, cpx2, cpy2, x, y);
 }
 
 - (void)recursiveBezierX1:(float)x1 y1:(float)y1
@@ -190,7 +182,6 @@ typedef std::vector<subpath_t> path_t;
 	[self recursiveQuadraticX1:currentPos.x y1:currentPos.y x2:cp.x y2:cp.y x3:p.x y3:p.y level:0];
 	currentPos = p;
 	currentPath.push_back(currentPos);
-    CGPathAddQuadCurveToPoint(cgPath, &transform, cpx, cpy, x, y);
 }
 
 - (void)recursiveQuadraticX1:(float)x1 y1:(float)y1
@@ -300,7 +291,6 @@ typedef std::vector<subpath_t> path_t;
 		currentPos = EJVector2ApplyTransform( EJVector2Make( x + cosf(angle) * radius, y + sinf(angle) * radius ), transform);
 		currentPath.push_back( currentPos );
 	}
-	CGPathAddArc(cgPath, &transform, x, y, radius, startAngle, endAngle, antiClockwise);
 }
 
 - (void)drawPolygonsToContext:(EJCanvasContext *)context target:(EJPathPolygonTarget)target {
@@ -467,8 +457,8 @@ typedef std::vector<subpath_t> path_t;
 	color.rgba.a = (float)color.rgba.a * state->globalAlpha;
 	
 	// enable stencil test when drawing transparent lines
-	// cycle through the highest-but-one 6 bits, so that the stencil buffer only has to be cleared after six stroke operations
-	// the lowest bit is reserved for drawPolygonsToContext, highest for clip
+	// cycle through the highest 7 bits, so that the stencil buffer only has to be cleared after seven stroke operations
+	// the lowest bit is reserved for drawPolygonsToContext
 	if(color.rgba.a < 0xff) {
 		stencilMask <<= 1;
 		
@@ -716,10 +706,10 @@ typedef std::vector<subpath_t> path_t;
 		[context flushBuffers];
 		glDisable(GL_STENCIL_TEST);
 		
-		if(stencilMask == (1<<6)) {
+		if(stencilMask == (1<<7)) {
 			stencilMask = (1<<0);
 			
-			glStencilMask(0x7f);
+			glStencilMask(0xff);
 			glClearStencil(0x0);
 			glClear(GL_STENCIL_BUFFER_BIT);
 		}
