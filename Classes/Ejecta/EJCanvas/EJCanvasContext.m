@@ -2,11 +2,6 @@
 #import "EJFont.h"
 #import "EJBindingCanvasPattern.h"
 
-@interface EJCanvasContext()
-- (void)clipToPath:(EJPath*)cpath;
-- (void)stopClipping;
-@end
-
 @implementation EJCanvasContext
 
 EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
