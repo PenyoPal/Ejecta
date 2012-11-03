@@ -594,12 +594,6 @@ EJ_BIND_FUNCTION( strokeText, ctx, argc, argv ) {
 	return NULL;
 }
 
-EJ_BIND_FUNCTION(clip, ctx, argc, argv) {
-    ejectaInstance.currentRenderingContext = renderingContext;
-    [renderingContext clip];
-    return NULL;
-}
-
 EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
 	if (argc < 1) {	return NULL; }
 	EJBindingImage * jsImage = (EJBindingImage *)JSObjectGetPrivate((JSObjectRef)argv[0]);
@@ -624,6 +618,17 @@ EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
 	JSObjectSetPrivate( obj, (void *)pat );
 	JSValueUnprotect(ctx, obj);
 	return obj;
+
+EJ_BIND_FUNCTION( clip, ctx, argc, argv ) {
+	ejectaInstance.currentRenderingContext = renderingContext;
+	[renderingContext clip];
+	return NULL;
+}
+
+EJ_BIND_FUNCTION( resetClip, ctx, argc, argv ) {
+	ejectaInstance.currentRenderingContext = renderingContext;
+	[renderingContext resetClip];
+	return NULL;
 }
 
 EJ_BIND_FUNCTION_NOT_IMPLEMENTED( createRadialGradient );

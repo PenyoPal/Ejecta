@@ -32,9 +32,8 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		state->textBaseline = kEJTextBaselineAlphabetic;
 		state->textAlign = kEJTextAlignStart;
 		state->font = [[UIFont fontWithName:@"Helvetica" size:10] retain];
-        state->clippingEnabled = NO;
-		state->clippingPath = nil;
 		state->fillWithPattern = NO;
+		state->clipPath = nil;
 		
 		bufferWidth = viewportWidth = width = widthp;
 		bufferHeight = viewportHeight = height = heightp;
@@ -54,9 +53,10 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 - (void)dealloc {
 	[fontCache release];
 	
-	// Release all fonts from the stack
+	// Release all fonts and clip paths from the stack
 	for( int i = 0; i < stateIndex + 1; i++ ) {
 		[stateStack[i].font release];
+		[stateStack[i].clipPath release];
 	}
 	
 	if( viewFrameBuffer ) { glDeleteFramebuffers( 1, &viewFrameBuffer); }
@@ -94,16 +94,17 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	glGenRenderbuffers(1, &stencilBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, stencilBuffer);
 	if( msaaEnabled ) {
-		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_STENCIL_INDEX8_OES, bufferWidth, bufferHeight);
+		glRenderbufferStorageMultisampleAPPLE(GL_RENDERBUFFER, msaaSamples, GL_DEPTH24_STENCIL8_OES, bufferWidth, bufferHeight);
 	}
 	else {
-		glRenderbufferStorageOES(GL_RENDERBUFFER, GL_STENCIL_INDEX8_OES, bufferWidth, bufferHeight);
+		glRenderbufferStorageOES(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, bufferWidth, bufferHeight);
 	}
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, stencilBuffer);
 	
 	glBindRenderbuffer(GL_RENDERBUFFER, msaaEnabled ? msaaRenderBuffer : viewRenderBuffer );
 	
-	glClear(GL_STENCIL_BUFFER_BIT);
+	glClear(GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 - (void)bindVertexBuffer {
@@ -136,6 +137,13 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	currentTexture = nil;
 	
 	[self bindVertexBuffer];
+	
+	if( state->clipPath ) {
+		glDepthFunc(GL_EQUAL);
+	}
+	else {
+		glDepthFunc(GL_ALWAYS);
+	}
 }
 
 - (void)setTexture:(EJTexture *)newTexture {
@@ -274,10 +282,12 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		NSLog(@"Warning: EJ_CANVAS_STATE_STACK_SIZE (%d) reached", EJ_CANVAS_STATE_STACK_SIZE);
 		return;
 	}
+	
 	stateStack[stateIndex+1] = stateStack[stateIndex];
 	stateIndex++;
 	state = &stateStack[stateIndex];
 	[state->font retain];
+	[state->clipPath retain];
 }
 
 - (void)restore {
@@ -285,22 +295,31 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		NSLog(@"Warning: Can't pop stack at index 0");
 		return;
 	}
+	
 	EJCompositeOperation oldCompositeOp = state->globalCompositeOperation;
+	EJPath * oldClipPath = state->clipPath;
 	
+	// Clean up current state
 	[state->font release];
+
+	if( state->clipPath && state->clipPath != stateStack[stateIndex-1].clipPath ) {
+		[self resetClip];
+	}
 	
+	// Load state from stack
 	stateIndex--;
 	state = &stateStack[stateIndex];
 	
     path.transform = state->transform;
     
+	// Set Composite op, if different
 	if( state->globalCompositeOperation != oldCompositeOp ) {
 		self.globalCompositeOperation = state->globalCompositeOperation;
 	}
-    if (state->clippingEnabled) {
-		[self clipToPath:state->clippingPath];
-    } else {
-		[self stopClipping];
+	
+	// Render clip path, if present and different
+	if( state->clipPath && state->clipPath != oldClipPath ) {
+		[state->clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
 	}
 }
 
@@ -444,8 +463,8 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	[path close];
 }
 
-- (void)fill {
-	[path drawPolygonsToContext:self];
+- (void)fill {	
+	[path drawPolygonsToContext:self target:kEJPathPolygonTargetColor];
 }
 
 - (void)stroke {
@@ -515,53 +534,23 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	return [font measureString:text];
 }
 
-- (void)clipToPath:(EJPath*)cpath
-{
-	[self flushBuffers];
-	[self createStencilBufferOnce];
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glDisableClientState(GL_COLOR_ARRAY);
-	glEnable(GL_STENCIL_TEST);
-	glStencilMask(0x01 << 7);
-	glClearStencil(0);
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	glStencilFunc(GL_ALWAYS, 0x01 << 7, 0x01 << 7);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-	CGRect bounds = CGPathGetPathBoundingBox(cpath.cgPath);
-	static EJColorRGBA white = {.hex = 0xffffffff};
-	[self pushRectX:bounds.origin.x y:bounds.origin.y w:bounds.size.width
-				  h:bounds.size.height tx:0 ty:0 tw:0 th:0 color:white
-	  withTransform:CGAffineTransformIdentity];
-	[self flushBuffers];
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	glStencilFunc(GL_EQUAL, 0x01 << 7, 0x01 << 7);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	glEnableClientState(GL_COLOR_ARRAY);
+- (void)clip {
+	[self resetClip];
+	
+	state->clipPath = [path copy];
+	[state->clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
 }
 
-- (void)stopClipping
-{
-	glDisable(GL_STENCIL_TEST);
-	if (state->clippingPath) {
-		[state->clippingPath release];
-	}
-	state->clippingPath = nil;
-}
-
-- (void)clip
-{
-	if (CGPathIsEmpty(path.cgPath)) {
-		state->clippingEnabled = NO;
-		[self stopClipping];
-	} else {
-		state->clippingEnabled = YES;
-		state->clippingPath = path;
-		[state->clippingPath retain];
-		[self clipToPath:path];
+- (void)resetClip {
+	if( state->clipPath ) {
+		[self flushBuffers];
+		[state->clipPath release];
+		state->clipPath = nil;
+		
+		glDepthMask(GL_TRUE);
+		glClear(GL_DEPTH_BUFFER_BIT);
+		glDepthMask(GL_FALSE);
+		glDepthFunc(GL_ALWAYS);
 	}
 }
 
