@@ -93,7 +93,6 @@
 
 - (void)clearLocalStorage
 {
-    [psc lock];
     NSError *err;
     if (![psc removePersistentStore:[psc persistentStoreForURL:storeUrl]
                               error:&err]) {
@@ -102,6 +101,9 @@
         [psc unlock];
         return;
     }
+	[psc release];
+	[moc reset];
+	[moc release];
 
     NSFileManager *fm = [[NSFileManager alloc] init];
     if (![fm removeItemAtURL:storeUrl error:&err]) {
@@ -120,7 +122,9 @@
         NSLog(@"Failed to create localStorage store: %@",
               [err localizedDescription]);
     }
-    [psc unlock];
+	moc = [[NSManagedObjectContext alloc] init];
+	[moc setPersistentStoreCoordinator:psc];
+	[moc setUndoManager:nil];
 }
 
 EJ_BIND_FUNCTION(getItem, ctx, argc, argv ) {
