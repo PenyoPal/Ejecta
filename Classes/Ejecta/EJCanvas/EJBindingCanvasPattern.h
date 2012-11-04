@@ -7,7 +7,6 @@
 //
 
 #import "EJBindingBase.h"
-#import "EJBindingImage.h"
 #import "EJTexture.h"
 
 typedef enum {
@@ -23,7 +22,7 @@ typedef enum {
 	EJCanvasPatternRepetitionType repetitionType;
 }
 
-- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj imageData:(EJBindingImage*)img repetition:(NSString*)repetition;
+- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj imageData:(NSObject*)img repetition:(NSString*)repetition;
 
 @property (nonatomic,readonly) EJTexture * texture;
 @property (nonatomic,readonly) EJCanvasPatternRepetitionType repetitionType;

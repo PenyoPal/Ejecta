@@ -596,7 +596,7 @@ EJ_BIND_FUNCTION( strokeText, ctx, argc, argv ) {
 
 EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
 	if (argc < 1) {	return NULL; }
-	EJBindingImage * jsImage = (EJBindingImage *)JSObjectGetPrivate((JSObjectRef)argv[0]);
+	NSObject * jsImage = JSObjectGetPrivate((JSObjectRef)argv[0]);
 	NSString *repetition = @"repeat";
 	if (argc >= 2) {
 		repetition = JSValueToNSString(ctx, argv[1]);

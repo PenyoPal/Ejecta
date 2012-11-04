@@ -7,6 +7,8 @@
 //
 
 #import "EJBindingCanvasPattern.h"
+@class EJBindingImage;
+@class EJBindingCanvas;
 
 @interface EJBindingCanvasPattern ()
 - (void)determineRepetitionType;
@@ -17,10 +19,18 @@
 @synthesize texture;
 @synthesize repetitionType;
 
-- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj imageData:(EJBindingImage *)img repetition:(NSString *)repetitionp
+- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj imageData:(NSObject *)img repetition:(NSString *)repetitionp
 {
 	if (self = [super initWithContext:ctxp object:obj argc:0 argv:NULL]) {
-		texture = [[EJTexture alloc] initWithPath:[[EJApp instance] pathForResource:img.path]];
+		if ([img respondsToSelector:@selector(path)]) {
+			texture = [[EJTexture alloc]
+					   initWithPath:[[EJApp instance]
+									 pathForResource:[(EJBindingImage*)img path]]];
+		} else if ([img respondsToSelector:@selector(texture)]) {
+			texture = [[(EJBindingCanvas*)img texture] retain];
+		} else {
+			NSLog(@"Can't create pattern from the given image data");
+		}
 		repetition = repetitionp;
 		[repetition retain];
 		[self determineRepetitionType];
