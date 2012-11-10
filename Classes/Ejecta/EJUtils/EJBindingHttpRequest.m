@@ -206,7 +206,13 @@ EJ_BIND_FUNCTION(send, ctx, argc, argv) {
 	NSURL * requestUrl = [NSURL URLWithString:url];
 	if( !requestUrl.host ) {
 		// No host? Assume we have a local file
-		requestUrl = [NSURL fileURLWithPath:[[EJApp instance] pathForResource:url]];
+		// See if the file is in ~/Library first, fall back to ~/Ejecta.app/App
+		NSString *libraryPath = [[EJApp instance] pathForLibraryResource:url];
+		if ([[NSFileManager defaultManager] fileExistsAtPath:libraryPath]) {
+			requestUrl = [NSURL fileURLWithPath:libraryPath];
+		} else {
+			requestUrl = [NSURL fileURLWithPath:[[EJApp instance] pathForResource:url]];
+		}
 	}
 	NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:requestUrl];
 	[request setHTTPMethod:method];
