@@ -74,14 +74,42 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 					   @"Library", saveToPath, nil]];
 
 	NSLog(@"Downloaded data, saving to %@", fileURL);
+	BOOL isDir = NO;
+	if (![[NSFileManager defaultManager]
+		  fileExistsAtPath:[fileURL URLByDeletingLastPathComponent].path
+		  isDirectory:&isDir]) {
+		NSLog(@"Need to create directory to download to");
+		NSError *err = nil;
+		[[NSFileManager defaultManager]
+		 createDirectoryAtURL:[fileURL URLByDeletingLastPathComponent]
+		 withIntermediateDirectories:YES attributes:nil error:&err];
+		if (err) {
+			NSLog(@"Failed to create directory! %@", err.localizedDescription);
+			if (errorCb) {
+				JSValueRef params[] = {};
+				[[EJApp instance] invokeCallback:errorCb thisObject:NULL
+											argc:0 argv:params];
+			}
+			[connection release];
+			[responseData release];
+			JSContextRef gctx = [EJApp instance].jsGlobalContext;
+			JSValueUnprotect(gctx, successCb);
+			JSValueUnprotect(gctx, errorCb);
+			return;
+		}
+	}
 	NSError *err = nil;
 	[responseData writeToURL:fileURL options:NSDataWritingAtomic error:&err];
 	JSValueRef params[] = { };
 	if (err) {
 		NSLog(@"Error writing data out: %@", err.localizedDescription);
-		[[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
+		if (errorCb) {
+			[[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
+		}
 	} else {
-		[[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
+		if (successCb) {
+			[[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
+		}
 	}
 	[connection release];
 	[responseData release];
