@@ -23,9 +23,17 @@
 {
 	if (self = [super initWithContext:ctxp object:obj argc:0 argv:NULL]) {
 		if ([img respondsToSelector:@selector(path)]) {
+			NSString *imgPath = [(EJBindingImage*)img path];
+			NSString *texturePath;
+			if ([[NSFileManager defaultManager]
+				 fileExistsAtPath:[[EJApp instance] pathForLibraryResource:imgPath]]) {
+				texturePath = [[EJApp instance] pathForLibraryResource:imgPath];
+			} else {
+				texturePath = [[EJApp instance]
+							   pathForResource:imgPath];
+			}
 			texture = [[EJTexture alloc]
-					   initWithPath:[[EJApp instance]
-									 pathForResource:[(EJBindingImage*)img path]]];
+					   initWithPath:texturePath];
 		} else if ([img respondsToSelector:@selector(texture)]) {
 			texture = [[(EJBindingCanvas*)img texture] retain];
 		} else {
