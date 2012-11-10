@@ -10,8 +10,11 @@
 
 @interface EJBindingURLFetcher : EJBindingBase <NSURLConnectionDataDelegate>
 {
-    NSMutableDictionary *urlCallbacks;
-    NSMutableDictionary *requestData;
+    NSString *saveToPath;
+	JSObjectRef successCb;
+	JSObjectRef errorCb;
+    NSMutableData *responseData;
+	NSURLConnection *connection;
 }
 
 @end

@@ -17,96 +17,104 @@
                  argv:(const JSValueRef [])argv
 {
     if (self =  [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
-        urlCallbacks = [[NSMutableDictionary alloc] initWithCapacity:1];
-        requestData = [[NSMutableDictionary alloc] initWithCapacity:1];
+		errorCb = successCb = NULL;
     }
     return self;
 }
 
+- (void)cancel
+{
+	if (connection) {
+		[connection cancel];
+		[connection release];
+	}
+	JSContextRef gctx = [EJApp instance].jsGlobalContext;
+	if (errorCb) {
+		JSValueUnprotect(gctx, errorCb);
+		errorCb = NULL;
+	}
+	if (successCb) {
+		JSValueUnprotect(gctx, successCb);
+		successCb = NULL;
+	}
+	if (responseData) {
+		[responseData release];
+	}
+	if (saveToPath) {
+		[saveToPath release];
+	}
+}
 
 #pragma mark - NSURLConnectionDataDelegate
-- (void)connection:(NSURLConnection *)connection
+- (void)connection:(NSURLConnection *)conn
 didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     [connection cancel];
     [connection release];
-    NSURL *remoteUrl = connection.originalRequest.URL;
-    NSArray *callbacks = [urlCallbacks objectForKey:remoteUrl];
-    JSObjectRef callback;
-    [(NSValue*)callbacks[1] getValue:&callback];
 
-
-    if( callback ) {
+    if( errorCb ) {
         JSContextRef gctx = [EJApp instance].jsGlobalContext;
         JSValueRef params[] = { };
-        [[EJApp instance] invokeCallback:callback thisObject:NULL argc:0 argv:params];
-        JSValueUnprotect(gctx, callback);
+        [[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
+        JSValueUnprotect(gctx, errorCb);
+		JSValueUnprotect(gctx, successCb);
+		errorCb = successCb = NULL;
     }
-    [urlCallbacks removeObjectForKey:remoteUrl];
-    [requestData removeObjectForKey:remoteUrl];
 }
 
--(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)conn didReceiveData:(NSData *)data
 {
-    NSURL *remoteUrl = connection.originalRequest.URL;
-    [[requestData objectForKey:remoteUrl] appendData:data];
+	[responseData appendData:data];
 }
 
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+- (void)connectionDidFinishLoading:(NSURLConnection *)conn
 {
-    NSURL *remoteUrl = connection.originalRequest.URL;
-    NSArray *callbacks = [urlCallbacks objectForKey:remoteUrl];
-    JSObjectRef callback;
-    [(NSValue*)callbacks[0] getValue:&callback];
+	NSURL *fileURL = [NSURL fileURLWithPathComponents:
+					  [NSArray arrayWithObjects:NSHomeDirectory(),
+					   @"Library", saveToPath, nil]];
 
-
-    NSData *fetchedData = [requestData objectForKey:remoteUrl];
-    NSString *data = [[NSString alloc] initWithBytes:[fetchedData bytes]
-                                              length:[fetchedData length]
-                                            encoding:NSUTF8StringEncoding];
-
-    if( callback ) {
-        JSContextRef gctx = [EJApp instance].jsGlobalContext;
-        JSValueRef params[] = { NSStringToJSValue(gctx, data) };
-        [[EJApp instance] invokeCallback:callback thisObject:NULL argc:1 argv:params];
-        JSValueUnprotect(gctx, callback);
-    }
-
-    [data release];
-    [urlCallbacks removeObjectForKey:remoteUrl];
-    [requestData removeObjectForKey:remoteUrl];
-    [connection release];
+	NSLog(@"Downloaded data, saving to %@", fileURL);
+	NSError *err = nil;
+	[responseData writeToURL:fileURL options:NSDataWritingAtomic error:&err];
+	JSValueRef params[] = { };
+	if (err) {
+		NSLog(@"Error writing data out: %@", err.localizedDescription);
+		[[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
+	} else {
+		[[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
+	}
+	[connection release];
+	[responseData release];
+	JSContextRef gctx = [EJApp instance].jsGlobalContext;
+	JSValueUnprotect(gctx, successCb);
+	JSValueUnprotect(gctx, errorCb);
 }
 
 #pragma mark - EJBinding
 EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
-    if (argc < 1) return NULL;
+    if (argc < 2) return NULL;
 
+	[self cancel];
+	
     NSURL *remoteUrl = [NSURL URLWithString:JSValueToNSString(ctx, argv[0])];
-    JSObjectRef successCallback = NULL;
-	if( argc > 1 && JSValueIsObject(ctx, argv[1]) ) {
-		successCallback = JSValueToObject(ctx, argv[1], NULL);
-        JSValueProtect(ctx, successCallback);
-    }
-    JSObjectRef errorCallback = NULL;
+	saveToPath = [JSValueToNSString(ctx, argv[1]) retain];
 	if( argc > 2 && JSValueIsObject(ctx, argv[2]) ) {
-		errorCallback = JSValueToObject(ctx, argv[2], NULL);
-        JSValueProtect(ctx, errorCallback);
+		successCb = JSValueToObject(ctx, argv[2], NULL);
+        JSValueProtect(ctx, successCb);
+    }
+	if( argc > 3 && JSValueIsObject(ctx, argv[3]) ) {
+		errorCb = JSValueToObject(ctx, argv[3], NULL);
+        JSValueProtect(ctx, errorCb);
 	}
     
     NSURLRequest *req = [NSURLRequest requestWithURL:remoteUrl
                          cachePolicy:NSURLRequestUseProtocolCachePolicy
                                      timeoutInterval:60.0];
-    NSURLConnection *conn = [[NSURLConnection alloc] initWithRequest:req
-                                                            delegate:self];
-    NSArray *callbacks = [NSArray
-                          arrayWithObjects:
-                          [NSValue valueWithBytes:&successCallback objCType:@encode(JSObjectRef)],
-                          [NSValue valueWithBytes:&errorCallback objCType:@encode(JSObjectRef)],
-                          nil];
-    [urlCallbacks setObject:callbacks forKey:remoteUrl];
-    [requestData setObject:[NSMutableData data] forKey:remoteUrl];
-    [conn start];
+    connection = [[NSURLConnection alloc] initWithRequest:req
+												 delegate:self];
+
+	responseData = [[NSMutableData alloc] initWithCapacity:1024 * 10];
+    [connection start];
     return NULL;
 }
 
