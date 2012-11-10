@@ -43,8 +43,13 @@
 	
 	// This will begin loading the sound in a background thread
 	loading = YES;
-	
-	NSString * fullPath = [[EJApp instance] pathForResource:path];
+	NSString *fullPath;
+	if ([[NSFileManager defaultManager]
+		 fileExistsAtPath:[[EJApp instance] pathForLibraryResource:path]]) {
+		fullPath = [[EJApp instance] pathForLibraryResource:path];
+	} else {
+		fullPath = [[EJApp instance] pathForResource:path];
+	}
 	NSInvocationOperation* loadOp = [[NSInvocationOperation alloc] initWithTarget:self
 				selector:@selector(loadOperation:) object:fullPath];
 	[loadOp setThreadPriority:0.0];
