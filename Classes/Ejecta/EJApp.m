@@ -212,6 +212,12 @@ static EJApp * ejectaInstance = NULL;
 	return [NSString stringWithFormat:@"%@/" EJECTA_APP_FOLDER "%@", [[NSBundle mainBundle] resourcePath], path];
 }
 
+- (NSString *)pathForLibraryResource:(NSString *)path
+{
+	return [NSString pathWithComponents:
+			[NSArray arrayWithObjects:NSHomeDirectory(), @"Library", path, nil]];
+}
+
 // ---------------------------------------------------------------------------------
 // Script loading and execution
 

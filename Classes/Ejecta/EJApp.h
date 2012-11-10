@@ -45,6 +45,7 @@
 - (void)resume;
 - (void)clearCaches;
 - (NSString *)pathForResource:(NSString *)resourcePath;
+- (NSString *)pathForLibraryResource:(NSString *)resourcePath;
 - (JSValueRef)createTimer:(JSContextRef)ctx argc:(size_t)argc argv:(const JSValueRef [])argv repeat:(BOOL)repeat;
 - (JSValueRef)deleteTimer:(JSContextRef)ctx argc:(size_t)argc argv:(const JSValueRef [])argv;
 
