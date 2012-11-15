@@ -11,6 +11,7 @@
 		1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */; };
+		1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */; };
 		1D3623260D0F684500981E51 /* EjectaAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* EjectaAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -78,6 +79,8 @@
 		1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingCanvasPattern.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
+		1AFBCF471654833B009B6A2B /* EJBindingTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingTextInput.h; sourceTree = "<group>"; };
+		1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingTextInput.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* EjectaAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = EjectaAppDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		1D3623250D0F684500981E51 /* EjectaAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EjectaAppDelegate.m; sourceTree = "<group>"; };
@@ -410,6 +413,8 @@
 				1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */,
 				B600945B162763EF005B4F9C /* EJBindingHttpRequest.h */,
 				B600945C162763F0005B4F9C /* EJBindingHttpRequest.m */,
+				1AFBCF471654833B009B6A2B /* EJBindingTextInput.h */,
+				1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */,
 			);
 			path = EJUtils;
 			sourceTree = "<group>";
@@ -539,6 +544,7 @@
 				1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */,
 				B600945D162763F1005B4F9C /* EJBindingHttpRequest.m in Sources */,
 				1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */,
+				1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
