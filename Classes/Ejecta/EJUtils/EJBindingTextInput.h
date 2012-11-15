@@ -10,6 +10,9 @@
 
 @interface EJBindingTextInput : EJBindingBase <UITextFieldDelegate> {
 	UITextField * inputField;
+	EJBindingTextInput * nextTextField;
 }
+
+@property (nonatomic,readonly) UITextField * inputField;
 
 @end

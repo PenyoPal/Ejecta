@@ -10,6 +10,8 @@
 
 @implementation EJBindingTextInput
 
+@synthesize inputField;
+
 - (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj argc:(size_t)argc argv:(const JSValueRef [])argv
 {
 	if (self = [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
@@ -50,7 +52,12 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-	[inputField resignFirstResponder];
+	if (nextTextField) {
+		NSLog(@"Going to next text field instead %@", nextTextField);
+		[nextTextField.inputField becomeFirstResponder];
+	} else {
+		[inputField resignFirstResponder];
+	}
 	return NO;
 }
 
@@ -85,6 +92,24 @@ EJ_BIND_FUNCTION(show, ctx, argc, argv) {
 
 EJ_BIND_GET(value, ctx) {
 	return NSStringToJSValue(ctx, inputField.text ? inputField.text : @"");
+}
+
+EJ_BIND_SET(value, ctx, newValue) {
+	inputField.text = JSValueToNSString(ctx, newValue);
+}
+
+EJ_BIND_GET(nextField, ctx) {
+	if (nextTextField) {
+		JSClassRef kls = [[EJApp instance] getJSClassForClass:[EJBindingTextInput class]];
+		JSObjectRef obj = JSObjectMake(ctx, kls, NULL);
+		JSObjectSetPrivate(obj, nextTextField);
+		return obj;
+	}
+	return NULL;
+}
+
+EJ_BIND_SET(nextField, ctx, nextTextInput) {
+	nextTextField = (EJBindingTextInput *)JSObjectGetPrivate((JSObjectRef)nextTextInput);
 }
 
 @end
