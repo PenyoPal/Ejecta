@@ -17,7 +17,7 @@
 	[loadOp release];
 }
 
-- (void)load:(EAGLContext *)context {
+- (void)load:(EAGLSharegroup *)sharegroup {
 	@autoreleasepool {	
 		NSLog(@"Loading Image: %@", path );
 		NSString *imageSrc;
@@ -27,7 +27,7 @@
 		} else {
 			imageSrc = [[EJApp instance] pathForResource:path];
 		}
-		EJTexture * tempTex = [[[EJTexture alloc] initWithPath:imageSrc context:context] autorelease];
+		EJTexture * tempTex = [[[EJTexture alloc] initWithPath:imageSrc sharegroup:sharegroup] autorelease];
 		[self performSelectorOnMainThread:@selector(endLoad:) withObject:tempTex waitUntilDone:NO];
 	
 	}
