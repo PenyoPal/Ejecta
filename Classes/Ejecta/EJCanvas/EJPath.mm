@@ -403,6 +403,92 @@ typedef std::vector<subpath_t> path_t;
 	}
 }
 
+- (void)drawPolygonsToContext:(EJCanvasContext *)context intersectionWithPaths:(NSArray *)otherPaths
+{
+	for (EJPath *p in otherPaths) {
+		[p endSubPath];
+	}
+	if( longestSubpath < 3 ) { return; }
+
+	[context setTexture:NULL];
+
+	EJCanvasState * state = context.state;
+	EJColorRGBA color = state->fillColor;
+	color.rgba.a = (float)color.rgba.a * state->globalAlpha;
+
+
+	// For potentially concave polygons (those with more than 3 unique vertices), we
+	// need to draw to the context twice: first to create a stencil mask, and then again
+	// to fill the created mask with the polygons color.
+	// TODO: add a fast path for polygons that only have 3 vertices
+
+	[context flushBuffers];
+	[context createStencilBufferOnce];
+
+
+	// Disable drawing to the color buffer, enable the stencil buffer
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glDisable(GL_BLEND);
+	glEnable(GL_STENCIL_TEST);
+	glStencilMask(0xff);
+
+	glStencilFunc(GL_ALWAYS, 0, 0xff);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
+
+	// Clear the needed area in the stencil buffer
+
+	glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+	[context
+	 pushRectX:minPos.x y:minPos.y w:maxPos.x-minPos.x h:maxPos.y-minPos.y
+	 tx:0 ty:0 tw:0 th:0
+	 color:color	withTransform:CGAffineTransformIdentity];
+	[context flushBuffers];
+
+
+	// For each subpath, draw to the stencil buffer twice:
+	// 1) for all back-facing polygons, increase the stencil value
+	// 2) for all front-facing polygons, decrease the stencil value
+
+	glEnable(GL_CULL_FACE);
+	for (EJPath *p in otherPaths) {
+		for( path_t::iterator sp = p->paths.begin(); sp != p->paths.end(); ++sp ) {
+			glVertexPointer(2, GL_FLOAT, sizeof(EJVector2), &(sp->points).front());
+
+			glCullFace(GL_BACK);
+			glStencilOp(GL_INCR_WRAP, GL_INCR_WRAP, GL_INCR_WRAP);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, sp->points.size());
+
+			glCullFace(GL_FRONT);
+			glStencilOp(GL_DECR_WRAP, GL_DECR_WRAP, GL_DECR_WRAP);
+			glDrawArrays(GL_TRIANGLE_FAN, 0, sp->points.size());
+		}
+	}
+	glDisable(GL_CULL_FACE);
+	[context bindVertexBuffer];
+
+	glDepthFunc(GL_ALWAYS);
+	glDepthMask(GL_TRUE);
+
+	glStencilFunc(GL_NOTEQUAL, 0x00, 0xff);
+    glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+	[context
+	 pushRectX:minPos.x y:minPos.y w:maxPos.x-minPos.x h:maxPos.y-minPos.y
+	 tx:0 ty:0 tw:0 th:0
+	 color:color	withTransform:CGAffineTransformIdentity];
+	[context flushBuffers];
+	glDisable(GL_STENCIL_TEST);
+
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_EQUAL);
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_BLEND);
+
+}
+
 - (void)drawArcToContext:(EJCanvasContext *)context atPoint:(EJVector2)point v1:(EJVector2)p1 v2:(EJVector2)p2 color:(EJColorRGBA)color {
 
 	EJCanvasState * state = context.state;

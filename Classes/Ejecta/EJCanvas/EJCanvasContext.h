@@ -79,8 +79,8 @@ typedef struct {
 	EJTextAlign textAlign;
 	EJTextBaseline textBaseline;
 	UIFont * font;
-	
-	EJPath * clipPath;
+
+	NSMutableArray * clipPaths;
 } EJCanvasState;
 
 

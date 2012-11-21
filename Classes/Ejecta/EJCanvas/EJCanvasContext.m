@@ -29,7 +29,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 		state->textAlign = kEJTextAlignStart;
 		state->font = [[UIFont fontWithName:@"Helvetica" size:10] retain];
 		state->fillWithPattern = NO;
-		state->clipPath = nil;
+		state->clipPaths = [[NSMutableArray alloc] init];
 		
 		bufferWidth = viewportWidth = width = widthp;
 		bufferHeight = viewportHeight = height = heightp;
@@ -53,7 +53,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	// Release all fonts and clip paths from the stack
 	for( int i = 0; i < stateIndex + 1; i++ ) {
 		[stateStack[i].font release];
-		[stateStack[i].clipPath release];
+		[stateStack[i].clipPaths release];
 	}
 	
 	if( viewFrameBuffer ) { glDeleteFramebuffers( 1, &viewFrameBuffer); }
@@ -136,7 +136,7 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	
 	[self bindVertexBuffer];
 	
-	if( state->clipPath ) {
+	if( state->clipPaths.count > 0 ) {
 		glDepthFunc(GL_EQUAL);
 	}
 	else {
@@ -291,7 +291,8 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	stateIndex++;
 	state = &stateStack[stateIndex];
 	[state->font retain];
-	[state->clipPath retain];
+	state->clipPaths = [[NSMutableArray alloc]
+						initWithArray:stateStack[stateIndex-1].clipPaths];
 }
 
 - (void)restore {
@@ -301,12 +302,12 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	}
 	
 	EJCompositeOperation oldCompositeOp = state->globalCompositeOperation;
-	EJPath * oldClipPath = state->clipPath;
+	NSArray * oldClipPaths = state->clipPaths;
 	
 	// Clean up current state
 	[state->font release];
 
-	if( state->clipPath && state->clipPath != stateStack[stateIndex-1].clipPath ) {
+	if( state->clipPaths.count > 0 && ![state->clipPaths isEqualToArray:stateStack[stateIndex-1].clipPaths] ) {
 		[self resetClip];
 	}
 	
@@ -322,8 +323,10 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	}
 	
 	// Render clip path, if present and different
-	if( state->clipPath && state->clipPath != oldClipPath ) {
-		[state->clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
+	if( state->clipPaths.count > 0 && ![state->clipPaths isEqualToArray:oldClipPaths] ) {
+		for (EJPath * clipPath in state->clipPaths) {
+			[clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
+		}
 	}
 }
 
@@ -539,17 +542,19 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 }
 
 - (void)clip {
-	[self resetClip];
-	
-	state->clipPath = [path copy];
-	[state->clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
+	glDepthMask(GL_TRUE);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glDepthMask(GL_FALSE);
+	glDepthFunc(GL_ALWAYS);
+
+	[state->clipPaths addObject:[path copy]];
+	[[state->clipPaths objectAtIndex:0] drawPolygonsToContext:self intersectionWithPaths:state->clipPaths];
 }
 
 - (void)resetClip {
-	if( state->clipPath ) {
+	if( state->clipPaths.count > 0 ) {
 		[self flushBuffers];
-		[state->clipPath release];
-		state->clipPath = nil;
+		[state->clipPaths removeAllObjects];
 		
 		glDepthMask(GL_TRUE);
 		glClear(GL_DEPTH_BUFFER_BIT);

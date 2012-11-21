@@ -41,6 +41,7 @@ typedef enum {
 - (void)arcX:(float)x y:(float)y radius:(float)radius startAngle:(float)startAngle endAngle:(float)endAngle	antiClockwise:(BOOL)antiClockwise;
 
 - (void)drawPolygonsToContext:(EJCanvasContext *)context target:(EJPathPolygonTarget)target;
+- (void)drawPolygonsToContext:(EJCanvasContext *)context intersectionWithPaths:(NSArray *)otherPaths;
 - (void)drawLinesToContext:(EJCanvasContext *)context;
 
 @end
