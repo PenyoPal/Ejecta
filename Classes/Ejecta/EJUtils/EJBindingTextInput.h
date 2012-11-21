@@ -6,9 +6,9 @@
 //
 //
 
-#import "EJBindingBase.h"
+#import "EJBindingEventedBase.h"
 
-@interface EJBindingTextInput : EJBindingBase <UITextFieldDelegate> {
+@interface EJBindingTextInput : EJBindingEventedBase <UITextFieldDelegate> {
 	UITextField * inputField;
 	EJBindingTextInput * nextTextField;
 }

@@ -61,6 +61,14 @@
 	return NO;
 }
 
+- (BOOL)textField:(UITextField *)textField
+shouldChangeCharactersInRange:(NSRange)range
+replacementString:(NSString *)string
+{
+	[self triggerEvent:@"keyup" argc:0 argv:NULL];
+	return YES;
+}
+
 EJ_BIND_FUNCTION(setFrame, ctx, argc, argv) {
 	if (argc < 4) { return NULL; }
 	NSInteger x = JSValueToNumberFast(ctx, argv[0]);
@@ -111,5 +119,7 @@ EJ_BIND_GET(nextField, ctx) {
 EJ_BIND_SET(nextField, ctx, nextTextInput) {
 	nextTextField = (EJBindingTextInput *)JSObjectGetPrivate((JSObjectRef)nextTextInput);
 }
+
+EJ_BIND_EVENT(keyup);
 
 @end
