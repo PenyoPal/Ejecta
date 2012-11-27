@@ -12,6 +12,7 @@
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */; };
 		1A75415A1663ED8C00C90B75 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7541591663ED8B00C90B75 /* EJBindingColourizeFilter.m */; };
+		1A75415D166537DE00C90B75 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A75415C166537D700C90B75 /* EJBindingGrayscaleFilter.m */; };
 		1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */; };
 		1D3623260D0F684500981E51 /* EjectaAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* EjectaAppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -82,6 +83,8 @@
 		1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1A7541581663ED8500C90B75 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
 		1A7541591663ED8B00C90B75 /* EJBindingColourizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingColourizeFilter.m; sourceTree = "<group>"; };
+		1A75415B166537CC00C90B75 /* EJBindingGrayscaleFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingGrayscaleFilter.h; sourceTree = "<group>"; };
+		1A75415C166537D700C90B75 /* EJBindingGrayscaleFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingGrayscaleFilter.m; sourceTree = "<group>"; };
 		1AFBCF471654833B009B6A2B /* EJBindingTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingTextInput.h; sourceTree = "<group>"; };
 		1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingTextInput.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -420,6 +423,8 @@
 				1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */,
 				1A7541581663ED8500C90B75 /* EJBindingColourizeFilter.h */,
 				1A7541591663ED8B00C90B75 /* EJBindingColourizeFilter.m */,
+				1A75415B166537CC00C90B75 /* EJBindingGrayscaleFilter.h */,
+				1A75415C166537D700C90B75 /* EJBindingGrayscaleFilter.m */,
 			);
 			path = EJUtils;
 			sourceTree = "<group>";
@@ -551,6 +556,7 @@
 				1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */,
 				1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */,
 				1A75415A1663ED8C00C90B75 /* EJBindingColourizeFilter.m in Sources */,
+				1A75415D166537DE00C90B75 /* EJBindingGrayscaleFilter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
