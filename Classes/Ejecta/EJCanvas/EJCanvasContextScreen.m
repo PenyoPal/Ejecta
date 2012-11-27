@@ -71,8 +71,9 @@
     glClear(GL_COLOR_BUFFER_BIT);
 
 	// Append the OpenGL view to Impact's main view
-	[[EJApp instance] hideLoadingScreen];
+	//[[EJApp instance] hideLoadingScreen];
 	[[EJApp instance].view addSubview:glview];
+	[[EJApp instance].view sendSubviewToBack:glview];
 }
 
 - (void)dealloc {

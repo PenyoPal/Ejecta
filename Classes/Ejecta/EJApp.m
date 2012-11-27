@@ -78,11 +78,11 @@ static EJApp * ejectaInstance = NULL;
 		
 		// Show the loading screen - commented out for now.
 		// This causes some visual quirks on different devices, as the launch screen may be a 
-		// different one than we loade here - let's rather show a black screen for 200ms...
-		//NSString * loadingScreenName = [EJApp landscapeMode] ? @"Default-Landscape.png" : @"Default-Portrait.png";
-		//loadingScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:loadingScreenName]];
-		//loadingScreen.frame = self.view.bounds;
-		//[self.view addSubview:loadingScreen];
+		// different one than we load here - let's rather show a black screen for 200ms...
+		NSString * loadingScreenName = self.landscapeMode ? @"Default-Landscape.png" : @"Default-Portrait.png";
+		loadingScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:loadingScreenName]];
+		loadingScreen.frame = self.view.bounds;
+		[self.view addSubview:loadingScreen];
 		
 		paused = false;
 		internalScaling = 1;
@@ -209,9 +209,9 @@ static EJApp * ejectaInstance = NULL;
 
 
 - (void)hideLoadingScreen {
-	//[loadingScreen removeFromSuperview];
-	//[loadingScreen release];
-	//loadingScreen = nil;
+	[loadingScreen removeFromSuperview];
+	[loadingScreen release];
+	loadingScreen = nil;
 }
 
 - (NSString *)pathForResource:(NSString *)path {
