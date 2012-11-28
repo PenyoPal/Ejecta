@@ -39,7 +39,7 @@ window.console = {
 		var args = Array.prototype.join.call(arguments, ', ');
 		ej.log( args );
 	},
-	
+
 	assert: function() {
 		var args = Array.prototype.slice.call(arguments);
 		var assertion = args.shift();
@@ -71,35 +71,56 @@ window.localStorage = new Ejecta.LocalStorage();
 
 
 // Set up a "fake" HTMLElement
-HTMLElement = function( tagName ){ 
+HTMLElement = function( tagName ){
 	this.tagName = tagName;
+	this._eventListeners = {};
+	this._data_attrs = {};
 	this.children = [];
 };
 
 HTMLElement.prototype.appendChild = function( element ) {
 	this.children.push( element );
-	
+
 	// If the child is a script element, begin to load it
 	if( element.tagName == 'script' ) {
 		ej.setTimeout( function(){
 			ej.require( element.src );
 			if( element.onload ) {
 				element.onload();
+			} else if( element._eventListeners.load ) {
+					var evt = {type: 'load', srcElement: element};
+					element._eventListeners.load(evt);
+					delete element._eventListeners.load;
 			}
 		}, 1);
 	}
 };
 
+HTMLElement.prototype.setAttribute = function( key, value ) {
+	this._data_attrs[key] = value;
+};
+
+HTMLElement.prototype.getAttribute = function( key ) {
+	return this._data_attrs[key];
+};
+
+HTMLElement.prototype.addEventListener = function( event, handler, capture ) {
+	this._eventListeners[event] = handler;
+};
+
+HTMLElement.prototype.removeEventListener = function( event, handler, capture ) {
+	delete this._eventListeners[event];
+};
 
 // The document object
 window.document = {
 	location: { href: 'index' },
-	
+
 	head: new HTMLElement( 'head' ),
 	body: new HTMLElement( 'body' ),
-	
+
 	events: {},
-	
+
 	createElement: function( name ) {
 		if( name === 'canvas' ) {
 			var canvas = new Ejecta.Canvas();
@@ -115,14 +136,14 @@ window.document = {
 		}
 		return new HTMLElement( name );
 	},
-	
+
 	getElementById: function( id ){
 		if( id === 'canvas' ) {
 			return window.canvas;
 		}
 		return null;
 	},
-	
+
 	getElementsByTagName: function( tagName ) {
 		if( tagName === 'head' ) {
 			return [document.head];
@@ -132,7 +153,7 @@ window.document = {
 		}
 		return [];
 	},
-	
+
 	addEventListener: function( type, callback, useCapture ){
 		if( type == 'DOMContentLoaded' ) {
 			ej.setTimeout( callback, 1 );
@@ -140,7 +161,7 @@ window.document = {
 		}
 		if( !this.events[type] ) {
 			this.events[type] = [];
-			
+
 			// call the event initializer, if this is the first time we
 			// bind to this event.
 			if( typeof(this._eventInitializers[type]) == 'function' ) {
@@ -149,33 +170,33 @@ window.document = {
 		}
 		this.events[type].push( callback );
 	},
-	
+
 	removeEventListener: function( type, callback ) {
 		var listeners = this.events[ type ];
 		if( !listeners ) { return; }
-		
+
 		for( var i = listeners.length; i--; ) {
 			if( listeners[i] === callback ) {
 				listeners.splice(i, 1);
 			}
 		}
 	},
-	
+
 	_eventInitializers: {},
 	_publishEvent: function( type, event ) {
 		var listeners = this.events[ type ];
 		if( !listeners ) { return; }
-		
+
 		for( var i = 0; i < listeners.length; i++ ) {
 			listeners[i]( event );
 		}
 	}
 };
-window.canvas.addEventListener = window.addEventListener = function( type, callback ) { 
-	window.document.addEventListener(type,callback); 
+window.canvas.addEventListener = window.addEventListener = function( type, callback ) {
+	window.document.addEventListener(type,callback);
 };
-window.canvas.removeEventListener = window.removeEventListener = function( type, callback ) { 
-	window.document.removeEventListener(type,callback); 
+window.canvas.removeEventListener = window.removeEventListener = function( type, callback ) {
+	window.document.removeEventListener(type,callback);
 };
 
 
@@ -187,7 +208,7 @@ window.canvas.removeEventListener = window.removeEventListener = function( type,
 // touch class just call a simple callback.
 var touchInput = null;
 var touchEvent = {
-	type: 'touchstart', 
+	type: 'touchstart',
 	target: canvas,
 	touches: null,
 	targetTouches: null,
@@ -201,7 +222,7 @@ var publishTouchEvent = function( type, all, changed ) {
 	touchEvent.targetTouches = all;
 	touchEvent.changedTouches = changed;
 	touchEvent.type = type;
-	
+
 	document._publishEvent( type, touchEvent );
 };
 window.document._eventInitializers.touchstart =
@@ -221,7 +242,7 @@ window.document._eventInitializers.touchstart =
 
 var accelerometer = null;
 var deviceMotionEvent = {
-	type: 'devicemotion', 
+	type: 'devicemotion',
 	target: canvas,
 	acceleration: {x: 0, y: 0, z: 0},
 	accelerationIncludingGravity: {x: 0, y: 0, z: 0},
