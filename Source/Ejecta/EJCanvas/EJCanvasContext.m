@@ -330,9 +330,6 @@ EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
 	if( state->clipPath && state->clipPath != oldClipPath ) {
 		[state->clipPath drawPolygonsToContext:self target:kEJPathPolygonTargetDepth];
 	}
-	if ( oldClipPath && oldClipPath == state->clipPath ) {
-		[oldClipPath release];
-	}
 }
 
 - (void)rotate:(float)angle {
