@@ -100,6 +100,7 @@
 	JSClassRef audioClass = [[EJApp instance] getJSClassForClass:[EJBindingAudio class]];
 	JSObjectRef src = JSObjectMake( ctx, audioClass, NULL );
 	JSObjectSetPrivate(src, (void*)self);
+	[self retain];
 	JSObjectSetProperty(ctx, obj, targetStr, src, kJSPropertyAttributeNone, nil);
 	JSValueRef args[1] = { obj };
 	[self triggerEvent:@"ended" argc:1 argv:args];
