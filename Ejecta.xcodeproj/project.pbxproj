@@ -7,14 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */; };
 		1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
-		1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */; };
-		1A75415A1663ED8C00C90B75 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A7541591663ED8B00C90B75 /* EJBindingColourizeFilter.m */; };
-		1A75415D166537DE00C90B75 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A75415C166537D700C90B75 /* EJBindingGrayscaleFilter.m */; };
-		1A754160166558F300C90B75 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A75415F166558EF00C90B75 /* EJBindingLoadingScreen.m */; };
-		1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */; };
+		1AD6BD2516669BF800E7E8E2 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */; };
+		1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */; };
+		1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */; };
+		1AD6BD2816669BF800E7E8E2 /* EJBindingTextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */; };
+		1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */; };
+		1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -76,20 +76,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1A00DC4B16387B58000B3025 /* EJBindingURLFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingURLFetcher.h; sourceTree = "<group>"; };
-		1A00DC4C16387B58000B3025 /* EJBindingURLFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingURLFetcher.m; sourceTree = "<group>"; };
 		1A5C21A016420A9600A8A35F /* EJBindingCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingCanvasPattern.h; sourceTree = "<group>"; };
 		1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingCanvasPattern.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
-		1A7541581663ED8500C90B75 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
-		1A7541591663ED8B00C90B75 /* EJBindingColourizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingColourizeFilter.m; sourceTree = "<group>"; };
-		1A75415B166537CC00C90B75 /* EJBindingGrayscaleFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingGrayscaleFilter.h; sourceTree = "<group>"; };
-		1A75415C166537D700C90B75 /* EJBindingGrayscaleFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingGrayscaleFilter.m; sourceTree = "<group>"; };
-		1A75415E166558ED00C90B75 /* EJBindingLoadingScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingLoadingScreen.h; sourceTree = "<group>"; };
-		1A75415F166558EF00C90B75 /* EJBindingLoadingScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingLoadingScreen.m; sourceTree = "<group>"; };
-		1AFBCF471654833B009B6A2B /* EJBindingTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingTextInput.h; sourceTree = "<group>"; };
-		1AFBCF481654833B009B6A2B /* EJBindingTextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingTextInput.m; sourceTree = "<group>"; };
+		1AD6BD1916669BF800E7E8E2 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
+		1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingColourizeFilter.m; sourceTree = "<group>"; };
+		1AD6BD1B16669BF800E7E8E2 /* EJBindingGrayscaleFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingGrayscaleFilter.h; sourceTree = "<group>"; };
+		1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingGrayscaleFilter.m; sourceTree = "<group>"; };
+		1AD6BD1D16669BF800E7E8E2 /* EJBindingLoadingScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingLoadingScreen.h; sourceTree = "<group>"; };
+		1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingLoadingScreen.m; sourceTree = "<group>"; };
+		1AD6BD1F16669BF800E7E8E2 /* EJBindingTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingTextInput.h; sourceTree = "<group>"; };
+		1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingTextInput.m; sourceTree = "<group>"; };
+		1AD6BD2116669BF800E7E8E2 /* EJBindingURLFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingURLFetcher.h; sourceTree = "<group>"; };
+		1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingURLFetcher.m; sourceTree = "<group>"; };
+		1AD6BD2416669BF800E7E8E2 /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* PenyoPlanet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenyoPlanet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -355,6 +355,17 @@
 		B64CE642166682700087CF94 /* EJUtils */ = {
 			isa = PBXGroup;
 			children = (
+				1AD6BD1916669BF800E7E8E2 /* EJBindingColourizeFilter.h */,
+				1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */,
+				1AD6BD1B16669BF800E7E8E2 /* EJBindingGrayscaleFilter.h */,
+				1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */,
+				1AD6BD1D16669BF800E7E8E2 /* EJBindingLoadingScreen.h */,
+				1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */,
+				1AD6BD1F16669BF800E7E8E2 /* EJBindingTextInput.h */,
+				1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */,
+				1AD6BD2116669BF800E7E8E2 /* EJBindingURLFetcher.h */,
+				1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */,
+				1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */,
 				B64CE643166682700087CF94 /* EJBindingAccelerometer.h */,
 				B64CE644166682700087CF94 /* EJBindingAccelerometer.m */,
 				B64CE645166682700087CF94 /* EJBindingAdBanner.h */,
@@ -541,17 +552,17 @@
 				B64CE67B166682700087CF94 /* EJBindingGameCenter.m in Sources */,
 				B64CE67C166682700087CF94 /* EJBindingHttpRequest.m in Sources */,
 				B64CE67D166682700087CF94 /* EJBindingLocalStorage.m in Sources */,
-				1A620C1F162DDEAC00E2F69B /* EJLocalStored.xcdatamodeld in Sources */,
-				1A00DC4D16387B58000B3025 /* EJBindingURLFetcher.m in Sources */,
 				1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */,
-				1AFBCF491654833B009B6A2B /* EJBindingTextInput.m in Sources */,
-				1A75415A1663ED8C00C90B75 /* EJBindingColourizeFilter.m in Sources */,
-				1A75415D166537DE00C90B75 /* EJBindingGrayscaleFilter.m in Sources */,
-				1A754160166558F300C90B75 /* EJBindingLoadingScreen.m in Sources */,
 				B64CE67E166682700087CF94 /* EJBindingTouchInput.m in Sources */,
 				B64CE67F166682700087CF94 /* AppDelegate.m in Sources */,
 				B64CE681166682700087CF94 /* lodepng.c in Sources */,
 				B64CE682166682700087CF94 /* main.m in Sources */,
+				1AD6BD2516669BF800E7E8E2 /* EJBindingColourizeFilter.m in Sources */,
+				1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */,
+				1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */,
+				1AD6BD2816669BF800E7E8E2 /* EJBindingTextInput.m in Sources */,
+				1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */,
+				1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,12 +688,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		1A620C1D162DDEAB00E2F69B /* EJLocalStored.xcdatamodeld */ = {
+		1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */,
+				1AD6BD2416669BF800E7E8E2 /* EJLocalStored.xcdatamodel */,
 			);
-			currentVersion = 1A620C1E162DDEAC00E2F69B /* EJLocalStored.xcdatamodel */;
+			currentVersion = 1AD6BD2416669BF800E7E8E2 /* EJLocalStored.xcdatamodel */;
 			path = EJLocalStored.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
