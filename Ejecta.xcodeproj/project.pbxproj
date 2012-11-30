@@ -58,7 +58,6 @@
 		B64CE67F166682700087CF94 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B64CE651166682700087CF94 /* AppDelegate.m */; };
 		B64CE681166682700087CF94 /* lodepng.c in Sources */ = {isa = PBXBuildFile; fileRef = B64CE65F166682700087CF94 /* lodepng.c */; };
 		B64CE682166682700087CF94 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B64CE661166682700087CF94 /* main.m */; };
-		B64CE68F166682B10087CF94 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B64CE684166682B10087CF94 /* Default-568h@2x.png */; };
 		B64CE690166682B10087CF94 /* Default-Landscape.png in Resources */ = {isa = PBXBuildFile; fileRef = B64CE685166682B10087CF94 /* Default-Landscape.png */; };
 		B64CE691166682B10087CF94 /* Default-Portrait.png in Resources */ = {isa = PBXBuildFile; fileRef = B64CE686166682B10087CF94 /* Default-Portrait.png */; };
 		B64CE692166682B10087CF94 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = B64CE687166682B10087CF94 /* Default.png */; };
@@ -179,7 +178,6 @@
 		B64CE65F166682700087CF94 /* lodepng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lodepng.c; sourceTree = "<group>"; };
 		B64CE660166682700087CF94 /* lodepng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lodepng.h; sourceTree = "<group>"; };
 		B64CE661166682700087CF94 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		B64CE684166682B10087CF94 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		B64CE685166682B10087CF94 /* Default-Landscape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Landscape.png"; sourceTree = "<group>"; };
 		B64CE686166682B10087CF94 /* Default-Portrait.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait.png"; sourceTree = "<group>"; };
 		B64CE687166682B10087CF94 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
@@ -424,7 +422,6 @@
 		B64CE683166682B10087CF94 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				B64CE684166682B10087CF94 /* Default-568h@2x.png */,
 				B64CE685166682B10087CF94 /* Default-Landscape.png */,
 				B64CE686166682B10087CF94 /* Default-Portrait.png */,
 				B64CE687166682B10087CF94 /* Default.png */,
@@ -493,7 +490,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B68C5B95132E6CD60015092E /* App in Resources */,
-				B64CE68F166682B10087CF94 /* Default-568h@2x.png in Resources */,
 				B64CE690166682B10087CF94 /* Default-Landscape.png in Resources */,
 				B64CE691166682B10087CF94 /* Default-Portrait.png in Resources */,
 				B64CE692166682B10087CF94 /* Default.png in Resources */,
