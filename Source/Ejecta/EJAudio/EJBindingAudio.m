@@ -64,15 +64,17 @@
 	unsigned long long size = [[[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:nil] fileSize];
 	
 	NSObject<EJAudioSource> * src;
+	/*
 	if( size <= EJ_AUDIO_OPENAL_MAX_SIZE ) {
 		NSLog(@"Loading Sound(OpenAL): %@", path);
 		src = [[EJAudioSourceOpenAL alloc] initWithPath:fullPath];
 	}
 	else {
+	 */
 		NSLog(@"Loading Sound(AVAudio): %@", path);
 		src = [[EJAudioSourceAVAudio alloc] initWithPath:fullPath];
 		((EJAudioSourceAVAudio *)src).delegate = self;
-	}
+	//}
 	[src autorelease];
 	
 	[self performSelectorOnMainThread:@selector(endLoad:) withObject:src waitUntilDone:NO];
