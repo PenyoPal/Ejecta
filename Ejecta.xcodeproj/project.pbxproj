@@ -518,7 +518,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/zsh;
-			shellScript = "#!/bin/zsh\n\ncd ${SRCROOT:-$(dirname $0)}\nAPP_DEST=${1:-'./App'}\n\nfor episode in ${APP_DEST}/assets/e[0-9][0-9][0-9]; do\nif [[ ! -e $episode/tx/c1t1_1024.png ]]; then\ncontinue\nfi\nfor big_comic in $episode/tx/c[0-9]t[0-9]_1024.png; do\nsmall_comic=${big_comic%_1024.png}_512.png\necho \"${small_comic} -> ${big_comic}\"\ncp \"${small_comic}\" \"${big_comic}\"\necho \"${small_comic%png}json -> ${big_comic%png}json\"\ncp \"${small_comic%png}json\" \"${big_comic%png}json\"\ndone\ndone\n";
+			shellScript = "#!/bin/zsh\n\ncd ${SRCROOT:-$(dirname $0)}\nAPP_DEST=${1:-'./App'}\n\nfor episode in ${APP_DEST}/assets/e[0-9][0-9][0-9]; do\nif [[ ! -e $episode/tx/c1t1_1024.png ]]; then\ncontinue\nfi\nfor big_comic in $episode/tx/c[0-9]t[0-9]_1024.png; do\nsmall_comic=${big_comic%_1024.png}_512.png\ncp \"${small_comic}\" \"${big_comic%.png}s2.png\"\ncp \"${small_comic%png}json\" \"${big_comic%.png}s2.json\"\ndone\nfor big_comic in $episode/tx/c[0-9]t[0-9]_512.png; do\nsmall_comic=${big_comic%_512.png}_256.png\ncp \"${small_comic}\" \"${big_comic%.png}s2.png\"\ncp \"${small_comic%png}json\" \"${big_comic%.png}s2.json\"\ndone\ndone\n";
 		};
 		1ADC68EB16265E5500D2E676 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
