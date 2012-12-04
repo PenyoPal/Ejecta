@@ -6,7 +6,7 @@
 
 @class EJBindingCanvasPattern;
 
-#define EJ_CANVAS_STATE_STACK_SIZE 16
+#define EJ_CANVAS_STATE_STACK_SIZE 32
 #define EJ_CANVAS_VERTEX_BUFFER_SIZE 2048
 
 extern EJVertex CanvasVertexBuffer[EJ_CANVAS_VERTEX_BUFFER_SIZE];
