@@ -11,6 +11,7 @@
 @interface EJBindingTextInput : EJBindingEventedBase <UITextFieldDelegate> {
 	UITextField * inputField;
 	EJBindingTextInput * nextTextField;
+	JSObjectRef enterCb;
 }
 
 @property (nonatomic,readonly) UITextField * inputField;

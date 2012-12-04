@@ -40,25 +40,34 @@
 		inputField.hidden = YES;
 		inputField.delegate = self;
 		[[EJApp instance].view addSubview:inputField];
+		enterCb = NULL;
 	}
 	return self;
 }
 
 - (void)dealloc
 {
+	if (enterCb) {
+		JSValueUnprotect([EJApp instance].jsGlobalContext, enterCb);
+	}
 	[inputField release];
 	[super dealloc];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
+	NSLog(@"Enter pressed");
+	if (enterCb) {
+		NSLog(@"Enter key pressed, invoking cb");
+		[[EJApp instance] invokeCallback:enterCb thisObject:NULL argc:0 argv:NULL];
+	}
 	if (nextTextField) {
 		NSLog(@"Going to next text field instead %@", nextTextField);
 		[nextTextField.inputField becomeFirstResponder];
 	} else {
 		[inputField resignFirstResponder];
 	}
-	return NO;
+	return YES;
 }
 
 - (BOOL)textField:(UITextField *)textField
@@ -95,6 +104,19 @@ EJ_BIND_FUNCTION(hide, ctx, argc, argv) {
 
 EJ_BIND_GET(hidden, ctx) {
 	return JSValueMakeBoolean(ctx, inputField.hidden);
+}
+
+EJ_BIND_GET(onEnter, ctx) {
+	return enterCb;
+}
+
+EJ_BIND_SET(onEnter, ctx, newEnterCb) {
+	NSLog(@"Setting enter callback");
+	if (enterCb) {
+		JSValueUnprotect(ctx, enterCb);
+	}
+	enterCb = JSValueToObject(ctx, newEnterCb, NULL);
+	JSValueProtect(ctx, enterCb);
 }
 
 EJ_BIND_FUNCTION(show, ctx, argc, argv) {
