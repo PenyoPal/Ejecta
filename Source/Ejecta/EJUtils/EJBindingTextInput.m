@@ -93,6 +93,10 @@ EJ_BIND_FUNCTION(hide, ctx, argc, argv) {
 	return NULL;
 }
 
+EJ_BIND_GET(hidden, ctx) {
+	return JSValueMakeBoolean(ctx, inputField.hidden);
+}
+
 EJ_BIND_FUNCTION(show, ctx, argc, argv) {
 	inputField.hidden = NO;
 	return NULL;
