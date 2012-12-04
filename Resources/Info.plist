@@ -27,11 +27,11 @@
 		</dict>
 	</dict>
 	<key>CFBundleIdentifier</key>
-	<string>com.penyopal.${PRODUCT_NAME:rfc1034identifier}.fr</string>
+	<string>com.penyopal.PenyoPal.fr</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
+	<string>PenyoPal</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
