@@ -49,6 +49,10 @@
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>goodgirl.ttf</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array/>
 </dict>
