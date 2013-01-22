@@ -10,6 +10,8 @@
 		1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A8A39DB16AB1394003C6E36 /* goodgirl.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A39DA16AB1394003C6E36 /* goodgirl.ttf */; };
+		1A8A39E216AB239B003C6E36 /* EJInAppPurchase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A39E116AB239B003C6E36 /* EJInAppPurchase.m */; };
+		1A8A39E516AB2579003C6E36 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8A39E416AB2579003C6E36 /* StoreKit.framework */; };
 		1AD6BD2516669BF800E7E8E2 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */; };
 		1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */; };
 		1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */; };
@@ -81,6 +83,9 @@
 		1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingCanvasPattern.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A8A39DA16AB1394003C6E36 /* goodgirl.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = goodgirl.ttf; sourceTree = "<group>"; };
+		1A8A39E016AB239B003C6E36 /* EJInAppPurchase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJInAppPurchase.h; sourceTree = "<group>"; };
+		1A8A39E116AB239B003C6E36 /* EJInAppPurchase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJInAppPurchase.m; sourceTree = "<group>"; };
+		1A8A39E416AB2579003C6E36 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		1AD6BD1916669BF800E7E8E2 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
 		1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingColourizeFilter.m; sourceTree = "<group>"; };
 		1AD6BD1B16669BF800E7E8E2 /* EJBindingGrayscaleFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingGrayscaleFilter.h; sourceTree = "<group>"; };
@@ -203,6 +208,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A8A39E516AB2579003C6E36 /* StoreKit.framework in Frameworks */,
 				1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */,
 				B6F463A41636C3FB00FC89C1 /* SystemConfiguration.framework in Frameworks */,
 				5B7B76761619DB9700691910 /* CoreText.framework in Frameworks */,
@@ -251,6 +257,7 @@
 				B64CE60C1666825F0087CF94 /* libJavaScriptCore.a */,
 				B66F1E7F1476B6A40090D208 /* libstdc++.dylib */,
 				B66F1E771476B3AC0090D208 /* libicucore.dylib */,
+				1A8A39E416AB2579003C6E36 /* StoreKit.framework */,
 				1A620C1B162DDE7000E2F69B /* CoreData.framework */,
 				B6F463A31636C3FA00FC89C1 /* SystemConfiguration.framework */,
 				5B7B76751619DB9700691910 /* CoreText.framework */,
@@ -358,6 +365,8 @@
 		B64CE642166682700087CF94 /* EJUtils */ = {
 			isa = PBXGroup;
 			children = (
+				1A8A39E016AB239B003C6E36 /* EJInAppPurchase.h */,
+				1A8A39E116AB239B003C6E36 /* EJInAppPurchase.m */,
 				1AE77B961666BDEB009EA29E /* EJBindingDeviceInfo.h */,
 				1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */,
 				1AD6BD1916669BF800E7E8E2 /* EJBindingColourizeFilter.h */,
@@ -583,6 +592,7 @@
 				1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */,
 				1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */,
 				1AE77B981666BDEB009EA29E /* EJBindingDeviceInfo.m in Sources */,
+				1A8A39E216AB239B003C6E36 /* EJInAppPurchase.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
