@@ -84,14 +84,14 @@ EJ_BIND_FUNCTION(requestProductInfo, ctx, argc, argv) {
 	[self requestProductInfo:[NSSet setWithObject:productIdent]
 				withCallback:^(SKProduct *product) {
 					JSObjectRef infoObj = JSObjectMake(ctx, NULL, NULL);
-					JSStringRef priceProp = JSStringCreateWithUTF8CString("price");
 					NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
 					[numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];
 					[numberFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
 					[numberFormatter setLocale:product.priceLocale];
 					JSValueRef priceStr = NSStringToJSValue(ctx, [numberFormatter stringFromNumber:product.price]);
 					[numberFormatter release];
-					JSObjectSetProperty(ctx, infoObj, priceProp, priceStr,
+					JSObjectSetProperty(ctx, infoObj, JSStringCreateWithUTF8CString("price"),
+										priceStr,
 										kJSPropertyAttributeNone, NULL);
 					JSObjectSetProperty(ctx, infoObj, JSStringCreateWithUTF8CString("title"),
 										NSStringToJSValue(ctx, product.localizedTitle),
