@@ -127,6 +127,11 @@ EJ_BIND_FUNCTION(purchaseItem, ctx, argc, argv) {
 	return NULL;
 }
 
+EJ_BIND_FUNCTION(restorePurchases, ctx, argc, argv) {
+	[[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+	return NULL;
+}
+
 EJ_BIND_EVENT(ProductInfoRecieved)
 EJ_BIND_EVENT(PurchaseSucceess)
 EJ_BIND_EVENT(PurchaseFailure)
