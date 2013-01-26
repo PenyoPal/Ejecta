@@ -36,7 +36,7 @@
 		[[SKPaymentQueue defaultQueue] addPayment:payment];
 	} else {
 		// TODO: Indicate cause of failure
-		[self triggerEvent:@"purchaseFailure" argc:0 argv:NULL];
+		[self triggerEvent:@"PurchaseFailure" argc:0 argv:NULL];
 	}
 }
 
@@ -73,7 +73,7 @@
 								NSStringToJSValue(ctx, product.productIdentifier),
 								kJSPropertyAttributeNone, NULL);
 			JSValueRef params[] = { infoObj };
-			[self triggerEvent:@"productInfoRecieved" argc:1 argv:params];
+			[self triggerEvent:@"ProductInfoRecieved" argc:1 argv:params];
 		}
 	}
 }
@@ -85,15 +85,22 @@
 	NSLog(@"Payment queue updated: %@", transactions);
 	for (SKPaymentTransaction *transaction in transactions) {
 		// TODO: Put more useful info in the callback
+		NSLog(@"Transaction state: %d", transaction.transactionState);
 		switch (transaction.transactionState) {
 			case SKPaymentTransactionStatePurchased:
-				[self triggerEvent:@"purchaseSuccess" argc:0 argv:NULL];
+				NSLog(@"Transaction purchansed");
+				[self triggerEvent:@"PurchaseSuccess" argc:0 argv:NULL];
+				
 				break;
 			case SKPaymentTransactionStateFailed:
-				[self triggerEvent:@"purchaseFailure" argc:0 argv:NULL];
+				NSLog(@"Transaction failed: %@", transaction.error.localizedDescription);
+				[self triggerEvent:@"PurchaseFailure" argc:0 argv:NULL];
 				break;
 			default:
 				break;
+		}
+		if (transaction.transactionState != SKPaymentTransactionStatePurchasing) {
+			[[SKPaymentQueue defaultQueue] finishTransaction:transaction];
 		}
 	}
 }
@@ -120,8 +127,13 @@ EJ_BIND_FUNCTION(purchaseItem, ctx, argc, argv) {
 	return NULL;
 }
 
-EJ_BIND_EVENT(productInfoRecieved)
-EJ_BIND_EVENT(purchaseSucceess)
-EJ_BIND_EVENT(purchaseFailure)
+EJ_BIND_FUNCTION(restorePurchases, ctx, argc, argv) {
+	[[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+	return NULL;
+}
+
+EJ_BIND_EVENT(ProductInfoRecieved)
+EJ_BIND_EVENT(PurchaseSucceess)
+EJ_BIND_EVENT(PurchaseFailure)
 
 @end
