@@ -19,6 +19,12 @@
 	return self;
 }
 
+- (void)dealloc
+{
+	[[SKPaymentQueue defaultQueue] removeTransactionObserver:self];
+	[super dealloc];
+}
+
 - (void)requestProductInfo:(NSSet *)productIdents
 {
 	NSLog(@"Requesting info for %@", productIdents);
@@ -30,8 +36,7 @@
 
 - (void)purchaseItem:(SKProduct *)product
 {
-	NSLog(@"Sending purchase request for item %@", product);
-	SKPayment *payment = [SKPayment paymentWithProduct:product];
+ 	SKPayment *payment = [SKPayment paymentWithProduct:product];
 	if ([SKPaymentQueue canMakePayments]) {
 		[[SKPaymentQueue defaultQueue] addPayment:payment];
 	} else {
@@ -90,11 +95,14 @@
 			case SKPaymentTransactionStatePurchased:
 				NSLog(@"Transaction purchansed");
 				[self triggerEvent:@"PurchaseSuccess" argc:0 argv:NULL];
-				
 				break;
 			case SKPaymentTransactionStateFailed:
 				NSLog(@"Transaction failed: %@", transaction.error.localizedDescription);
 				[self triggerEvent:@"PurchaseFailure" argc:0 argv:NULL];
+				break;
+			case SKPaymentTransactionStateRestored:
+				NSLog(@"Transaction restored");
+				[self triggerEvent:@"RestoredPurchase" argc:0 argv:NULL];
 				break;
 			default:
 				break;
@@ -133,7 +141,8 @@ EJ_BIND_FUNCTION(restorePurchases, ctx, argc, argv) {
 }
 
 EJ_BIND_EVENT(ProductInfoRecieved)
-EJ_BIND_EVENT(PurchaseSucceess)
+EJ_BIND_EVENT(PurchaseSuccess)
 EJ_BIND_EVENT(PurchaseFailure)
+EJ_BIND_EVENT(RestoredPurchase)
 
 @end
