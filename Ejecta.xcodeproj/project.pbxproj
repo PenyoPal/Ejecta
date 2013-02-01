@@ -100,7 +100,7 @@
 		1AE77B961666BDEB009EA29E /* EJBindingDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingDeviceInfo.h; sourceTree = "<group>"; };
 		1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingDeviceInfo.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* PenyoPlanet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenyoPlanet.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* Ignite Reading.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Ignite Reading.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		5B7B76751619DB9700691910 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -234,7 +234,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* PenyoPlanet.app */,
+				1D6058910D05DD3D006BFB54 /* Ignite Reading.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -451,12 +451,11 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* PenyoPlanet */ = {
+		1D6058900D05DD3D006BFB54 /* IgniteReading */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "PenyoPlanet" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "IgniteReading" */;
 			buildPhases = (
 				1ADC68EB16265E5500D2E676 /* ShellScript */,
-				1A8C7D75166BBB2500C72218 /* ShellScript */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
 				1D60588E0D05DD3D006BFB54 /* Sources */,
 				1D60588F0D05DD3D006BFB54 /* Frameworks */,
@@ -465,9 +464,9 @@
 			);
 			dependencies = (
 			);
-			name = PenyoPlanet;
+			name = IgniteReading;
 			productName = iOSImpact;
-			productReference = 1D6058910D05DD3D006BFB54 /* PenyoPlanet.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* Ignite Reading.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -492,7 +491,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* PenyoPlanet */,
+				1D6058900D05DD3D006BFB54 /* IgniteReading */,
 			);
 		};
 /* End PBXProject section */
@@ -520,19 +519,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1A8C7D75166BBB2500C72218 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/zsh;
-			shellScript = "#!/bin/zsh\n\ncd ${SRCROOT:-$(dirname $0)}\nAPP_DEST=${1:-'./App'}\n\nfor episode in ${APP_DEST}/assets/e[0-9][0-9][0-9]; do\nif [[ ! -e $episode/tx/c1t1_1024.png ]]; then\ncontinue\nfi\nfor big_comic in $episode/tx/c[0-9]t[0-9]_1024.png; do\nsmall_comic=${big_comic%_1024.png}_512.png\ncp \"${small_comic}\" \"${big_comic%.png}s2.png\"\ncp \"${small_comic%png}json\" \"${big_comic%.png}s2.json\"\ndone\nfor big_comic in $episode/tx/c[0-9]t[0-9]_512.png; do\nsmall_comic=${big_comic%_512.png}_256.png\ncp \"${small_comic}\" \"${big_comic%.png}s2.png\"\ncp \"${small_comic%png}json\" \"${big_comic%.png}s2.json\"\ndone\ndone\n";
-		};
 		1ADC68EB16265E5500D2E676 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -544,7 +530,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/zsh;
-			shellScript = "#!/bin/zsh\n\ncd ${SRCROOT:-$(dirname $0)}\necho \"Build script running at $(pwd)\"\n\n# TODO: Parameterize this somehow for XCode?\nLANG=${1:-'en'}\nAPP_SRC=${2:-'../src'}\nAPP_DEST=${3:-'./App'}\nAUDIO_FORMAT=${4:-'caf'}\nexport GIT_DIR=\"${APP_SRC}/../.git\"\nexport GIT_WORK_TREE=\"${APP_SRC}/..\"\n\nif [[ -z $LANG ]]; then\necho \"Usage: $0 lang [src] [dest]\" >2\nexit 1\nfi\n\nmkdir -p \"$APP_DEST\"\n\n\"${APP_SRC}/../build_seed.py\" --format $LANG $APP_DEST\nerr=$?\nif [[ $err != 0 ]]; then\necho 'Error building seed'\nexit $err\nfi\n\n\"${APP_SRC}/../convert_audio.py\" \"${LANG}\" \"${APP_SRC}\" \"${APP_DEST}\" \"${AUDIO_FORMAT}\"\nerr=$?\nif [[ $err != 0 ]]; then\necho 'Error converting audio'\nexit $err\nfi\n\nfor d in $(find \"$APP_SRC\" -type d -not -path \"$APP_SRC\" -not -path \"$APP_SRC/assets*\"); do\nmkdir -p \"$APP_DEST/${d#$APP_SRC/}\"\ndone\n\nfor f in $(find \"$APP_SRC\" -type f -not -name '*.coffee' -not -path \"$APP_SRC/assets/*\" -not -path \"$APP_SRC/audio/*\"); do\ncp \"$f\" \"$APP_DEST/${f#$APP_SRC/}\"\ndone\n\n\n# TP FUNCTION\n\nPACK () {\n    SRC_DIR=$1\n    DEST_FILE=$2\n    QUALITY=$3\n    DITHER=$4\n\n    echo \"TP ${SRC_DIR} -> ${DEST_FILE}\"\n\n    if [[ ! -d \"$(dirname ${DEST_FILE})\" ]]; then\n    mkdir -p \"$(dirname ${DEST_FILE})\"\n    fi\n\n    if [[ ! -d \"${SRC_DIR}\" ]]; then\n    echo \"No directory\"\n    else\n    SHA_FILE=\"${DEST_FILE}.sha\"\n    touch ${SHA_FILE}\n    # check if git sha1 of directory == the one used to pack previously\n    git log -1 --format=format:\"%H\" -- ${SRC_DIR} | diff --brief ${SHA_FILE} - >/dev/null\n    comp_value=$?\n    if [ $comp_value -eq 1 -o ! -z \"$(git ls-files -om --exclude-standard \"${SRC_DIR}\")\" ]; then\n    # store git sha1 of the src directory in the compiled directory\n    git log -1 --format=format:\"%H\" -- ${SRC_DIR} > ${SHA_FILE}\n\n    for SIZE in 256 512 1024; do\n    SCALE=$(echo \"scale=2;${SIZE}/${SRC_SIZE}\" | bc)\n    TEXTURE_SIZE=$(echo \"${SIZE}*4\" | bc)\n\n    echo \"  ${SIZE}\"\n\n    TEXTUREPACKER_OUT=$(TexturePacker \"${SRC_DIR}\" \\\n    --data \"${DEST_FILE}_${SIZE}.json\" \\\n    --sheet \"${DEST_FILE}_${SIZE}.png\" \\\n    --scale ${SCALE} --max-size ${TEXTURE_SIZE} \\\n    --smart-update --padding 2 --format json --opt \"RGBA${QUALITY}\" \\\n    --dither-${DITHER} --disable-rotation --trim-sprite-names)\n\n    err=$?\n    if [[ $err != 0 ]]; then\n    exit $err\n    fi\n\n    if [[ $TEXTUREPACKER_OUT == 'Nothing to do - sprite sheet not changed' ]]; then\n    echo '  sprite sheet unchanged, no need to texture pack'\n    break\n    fi\n    done\n    fi\n    fi\n}\n\n\n# TexturePacker\nSRC_SIZE=1024\n\n# PACK picker\nPACK \"${APP_SRC}/assets/app\" \"${APP_DEST}/assets/tx/app\" \"5555\" \"fs-alpha\"\n\nfor EPISODE_DIR in ${APP_SRC}/assets/e[0-9][0-9][0-9]; do\nEPISODE=$(basename $EPISODE_DIR)\nCOMIC_DIRS=($(find $EPISODE_DIR -name 'c[0-9]*' -type d -maxdepth 1))\nif [[ ${#COMIC_DIRS} == 0 ]]; then\n    echo \"No comics for ${EPISODE}\"\n    fi\n\n    for COMIC_DIR in $COMIC_DIRS; do\n    COMIC=$(basename $COMIC_DIR)\n    TCOUNT=0;\n    for TEXTURE_DIR in $(find ${APP_SRC}/assets/${EPISODE}/${COMIC} -type d -not -path ${APP_SRC}/assets/${EPISODE}/${COMIC}); do\n    TCOUNT=$(echo \"${TCOUNT}+1\" | bc);\n\n    # PACK episode/comic\n    PACK \"${TEXTURE_DIR}\" \"${APP_DEST}/assets/${EPISODE}/tx/${COMIC}t${TCOUNT}\" \"5555\" \"none-linear\"\n\n    done\n    done\n\n    # PACK episode/game\n    PACK \"${APP_SRC}/assets/${EPISODE}/game\" \"${APP_DEST}/assets/${EPISODE}/tx/game\" \"4444\" \"none-linear\"\n\n    # PACK episode/words\n    PACK \"${APP_SRC}/assets/${EPISODE}/words\" \"${APP_DEST}/assets/${EPISODE}/tx/words\" \"4444\" \"none-linear\"\n\n    # PACK episode/card\n    PACK \"${APP_SRC}/assets/${EPISODE}/card\" \"${APP_DEST}/assets/${EPISODE}/tx/card\" \"4444\" \"none-linear\"\n\n    done\n    # End Texturepacker\n\n    exec coffee -c -o \"$APP_DEST\" \"$APP_SRC\"\n\n    if [ !-z \"$SRCROOT\" -a -e \"${SRCROOT}/index.js\" ]; then\n    cp \"${SRCROOT}/index.js\" \"$APP_SRC\"\n    fi\n";
+			shellScript = "#!/bin/zsh\n\ncd ${SRCROOT:-$(dirname $0)}\necho \"Build script running at $(pwd)\"\n\n# TODO: Parameterize this somehow for XCode?\nAPP_SRC=${1:-'../src'}\nAPP_DEST=${2:-'./App'}\nAUDIO_FORMAT=${3:-'caf'}\nexport GIT_DIR=\"${APP_SRC}/../.git\"\nexport GIT_WORK_TREE=\"${APP_SRC}/..\"\n\nmkdir -p \"$APP_DEST\"\n\nfor d in $(find \"$APP_SRC\" -type d -not -path \"$APP_SRC\" -not -path \"$APP_SRC/assets*\"); do\nmkdir -p \"$APP_DEST/${d#$APP_SRC/}\"\ndone\n\nfor f in $(find \"$APP_SRC\" -type f -not -name '*.coffee' -not -path \"$APP_SRC/assets/*\" -not -path \"$APP_SRC/audio/*\"); do\ncp \"$f\" \"$APP_DEST/${f#$APP_SRC/}\"\ndone\n\n\n# TP FUNCTION\n\nPACK () {\n    SRC_DIR=$1\n    DEST_FILE=$2\n    QUALITY=$3\n    DITHER=$4\n\n    echo \"TP ${SRC_DIR} -> ${DEST_FILE}\"\n\n    if [[ ! -d \"$(dirname ${DEST_FILE})\" ]]; then\n    mkdir -p \"$(dirname ${DEST_FILE})\"\n    fi\n\n    if [[ ! -d \"${SRC_DIR}\" ]]; then\n    echo \"No directory\"\n    else\n    SHA_FILE=\"${DEST_FILE}.sha\"\n    touch ${SHA_FILE}\n    # check if git sha1 of directory == the one used to pack previously\n    git log -1 --format=format:\"%H\" -- ${SRC_DIR} | diff --brief ${SHA_FILE} - >/dev/null\n    comp_value=$?\n    if [ $comp_value -eq 1 -o ! -z \"$(git ls-files -om --exclude-standard \"${SRC_DIR}\")\" ]; then\n    # store git sha1 of the src directory in the compiled directory\n    git log -1 --format=format:\"%H\" -- ${SRC_DIR} > ${SHA_FILE}\n\n    for SIZE in 256 512; do\n    SCALE=$(echo \"scale=2;${SIZE}/${SRC_SIZE}\" | bc)\n    TEXTURE_SIZE=$(echo \"${SIZE}*4\" | bc)\n\n    echo \"  ${SIZE}\"\n\n    TEXTUREPACKER_OUT=$(TexturePacker \"${SRC_DIR}\" \\\n    --data \"${DEST_FILE}_${SIZE}.json\" \\\n    --sheet \"${DEST_FILE}_${SIZE}.png\" \\\n    --scale ${SCALE} --max-size ${TEXTURE_SIZE} \\\n    --smart-update --padding 2 --format json --opt \"RGBA${QUALITY}\" \\\n    --dither-${DITHER} --disable-rotation --trim-sprite-names)\n\n    err=$?\n    if [[ $err != 0 ]]; then\n    exit $err\n    fi\n\n    if [[ $TEXTUREPACKER_OUT == 'Nothing to do - sprite sheet not changed' ]]; then\n    echo '  sprite sheet unchanged, no need to texture pack'\n    break\n    fi\n    done\n    fi\n    fi\n}\n\n\n# TexturePacker\nSRC_SIZE=1024\n\n# PACK picker\n#PACK \"${APP_SRC}/assets/app\" \"${APP_DEST}/assets/tx/app\" \"5555\" \"fs-alpha\"\n\nfor BOOK_DIR in ${APP_SRC}/assets/books/*; do\n                                        BOOK=$(basename $BOOK_DIR)\n                                        # PACK episode/game\n                                        PACK \"${BOOK_DIR}\" \"${APP_DEST}/assets/${BOOK}/tx\" \"4444\" \"none-linear\"\n\n                                        done\n                                        # End Texturepacker\n                                        \n                                        exec coffee -c -o \"$APP_DEST\" \"$APP_SRC\"\n                                        \n                                        if [ !-z \"$SRCROOT\" -a -e \"${SRCROOT}/index.js\" ]; then\n                                        cp \"${SRCROOT}/index.js\" \"$APP_SRC\"\n                                        fi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -617,7 +603,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Source/lib\"",
 				);
-				PRODUCT_NAME = PenyoPlanet;
+				PRODUCT_NAME = "Ignite Reading";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -639,7 +625,7 @@
 					"\"$(SRCROOT)\"",
 					"\"$(SRCROOT)/Source/lib\"",
 				);
-				PRODUCT_NAME = PenyoPlanet;
+				PRODUCT_NAME = "Ignite Reading";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -697,7 +683,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "PenyoPlanet" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "IgniteReading" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
