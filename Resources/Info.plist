@@ -45,7 +45,8 @@
 	<string>MainWindow</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>goodgirl.ttf</string>
+		<string>Asap.ttf</string>
+		<string>Asap-Bold.ttf</string>
 	</array>
 	<key>UIInterfaceOrientation</key>
 	<string>UIInterfaceOrientationLandscapeRight</string>
