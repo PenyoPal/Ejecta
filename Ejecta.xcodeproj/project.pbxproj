@@ -12,6 +12,7 @@
 		1A8A39DB16AB1394003C6E36 /* goodgirl.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A39DA16AB1394003C6E36 /* goodgirl.ttf */; };
 		1A8A39E216AB239B003C6E36 /* EJBindingInAppPurchase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8A39E116AB239B003C6E36 /* EJBindingInAppPurchase.m */; };
 		1A8A39E516AB2579003C6E36 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8A39E416AB2579003C6E36 /* StoreKit.framework */; };
+		1AB594C516D1B8B500E94772 /* EJBindingAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AB594C416D1B8B500E94772 /* EJBindingAlertView.m */; };
 		1AD6BD2516669BF800E7E8E2 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */; };
 		1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */; };
 		1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */; };
@@ -86,6 +87,8 @@
 		1A8A39E016AB239B003C6E36 /* EJBindingInAppPurchase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingInAppPurchase.h; sourceTree = "<group>"; };
 		1A8A39E116AB239B003C6E36 /* EJBindingInAppPurchase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingInAppPurchase.m; sourceTree = "<group>"; };
 		1A8A39E416AB2579003C6E36 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		1AB594C316D1B8B500E94772 /* EJBindingAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingAlertView.h; sourceTree = "<group>"; };
+		1AB594C416D1B8B500E94772 /* EJBindingAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingAlertView.m; sourceTree = "<group>"; };
 		1AD6BD1916669BF800E7E8E2 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
 		1AD6BD1A16669BF800E7E8E2 /* EJBindingColourizeFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingColourizeFilter.m; sourceTree = "<group>"; };
 		1AD6BD1B16669BF800E7E8E2 /* EJBindingGrayscaleFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingGrayscaleFilter.h; sourceTree = "<group>"; };
@@ -392,6 +395,8 @@
 				B64CE64C166682700087CF94 /* EJBindingLocalStorage.m */,
 				B64CE64D166682700087CF94 /* EJBindingTouchInput.h */,
 				B64CE64E166682700087CF94 /* EJBindingTouchInput.m */,
+				1AB594C316D1B8B500E94772 /* EJBindingAlertView.h */,
+				1AB594C416D1B8B500E94772 /* EJBindingAlertView.m */,
 			);
 			path = EJUtils;
 			sourceTree = "<group>";
@@ -593,6 +598,7 @@
 				1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */,
 				1AE77B981666BDEB009EA29E /* EJBindingDeviceInfo.m in Sources */,
 				1A8A39E216AB239B003C6E36 /* EJBindingInAppPurchase.m in Sources */,
+				1AB594C516D1B8B500E94772 /* EJBindingAlertView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
