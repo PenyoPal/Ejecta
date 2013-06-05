@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A1D87DE175EC99F003A063E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 1A1D87DD175EC99F003A063E /* Default-568h@2x.png */; };
 		1A5C21A216420A9600A8A35F /* EJBindingCanvasPattern.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */; };
 		1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A620C1B162DDE7000E2F69B /* CoreData.framework */; };
 		1A8A39DB16AB1394003C6E36 /* goodgirl.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1A8A39DA16AB1394003C6E36 /* goodgirl.ttf */; };
@@ -80,6 +81,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1A1D87DD175EC99F003A063E /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		1A5C21A016420A9600A8A35F /* EJBindingCanvasPattern.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingCanvasPattern.h; sourceTree = "<group>"; };
 		1A5C21A116420A9600A8A35F /* EJBindingCanvasPattern.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingCanvasPattern.m; sourceTree = "<group>"; };
 		1A620C1B162DDE7000E2F69B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -438,6 +440,7 @@
 		B64CE683166682B10087CF94 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1A1D87DD175EC99F003A063E /* Default-568h@2x.png */,
 				1A8A39DA16AB1394003C6E36 /* goodgirl.ttf */,
 				B64CE685166682B10087CF94 /* Default-Landscape.png */,
 				B64CE686166682B10087CF94 /* Default-Portrait.png */,
@@ -519,6 +522,7 @@
 				B64CE699166682B10087CF94 /* MainWindow.xib in Resources */,
 				B62436681666851E0046B8C7 /* Ejecta.js in Resources */,
 				1A8A39DB16AB1394003C6E36 /* goodgirl.ttf in Resources */,
+				1A1D87DE175EC99F003A063E /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
