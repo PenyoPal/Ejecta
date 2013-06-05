@@ -79,8 +79,22 @@ static EJApp * ejectaInstance = NULL;
 		// Show the loading screen - commented out for now.
 		// This causes some visual quirks on different devices, as the launch screen may be a 
 		// different one than we load here - let's rather show a black screen for 200ms...
-		NSString * loadingScreenName = self.landscapeMode ? @"Default-Landscape.png" : @"Default-Portrait.png";
+		NSString * loadingScreenName;
+		BOOL needsRotation = NO;
+		if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+			needsRotation = YES;
+			if ([[UIScreen mainScreen] bounds].size.height == 568) {
+				loadingScreenName = @"Default-568h.png";
+			} else {
+				loadingScreenName = @"Default.png";
+			}
+		} else {
+			loadingScreenName = @"Default-Landscape";
+		}
 		loadingScreen = [[UIImageView alloc] initWithImage:[UIImage imageNamed:loadingScreenName]];
+		if (needsRotation) {
+			loadingScreen.transform = CGAffineTransformMakeRotation(-1.0 * M_PI_2);
+		}
 		loadingScreen.frame = self.view.bounds;
 		[self.view addSubview:loadingScreen];
 		
