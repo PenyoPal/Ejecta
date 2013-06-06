@@ -660,8 +660,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Developer: James Cash (JVDQGAMT6R)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: James Cash (JVDQGAMT6R)";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_PREPROCESSOR_DEFINITIONS = NS_BLOCK_ASSERTIONS;
@@ -674,7 +674,8 @@
 				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_CFLAGS = "-DDEBUG";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "08566090-8685-43DE-B97C-01866EFE12EC";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "08566090-8685-43DE-B97C-01866EFE12EC";
 				SDKROOT = iphoneos;
 				VALID_ARCHS = "armv6 armv7";
 			};
