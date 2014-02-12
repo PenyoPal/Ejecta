@@ -21,6 +21,12 @@
 		1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */; };
 		1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */; };
 		1AE77B981666BDEB009EA29E /* EJBindingDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */; };
+		1AE81A9518AAD3040064A9B5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE81A9418AAD3040064A9B5 /* libz.dylib */; };
+		1AE81AA318AAD3800064A9B5 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AE81A9918AAD3800064A9B5 /* ioapi.c */; };
+		1AE81AA418AAD3800064A9B5 /* mztools.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AE81A9B18AAD3800064A9B5 /* mztools.c */; };
+		1AE81AA518AAD3800064A9B5 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AE81A9D18AAD3800064A9B5 /* unzip.c */; };
+		1AE81AA618AAD3800064A9B5 /* zip.c in Sources */ = {isa = PBXBuildFile; fileRef = 1AE81A9F18AAD3800064A9B5 /* zip.c */; };
+		1AE81AA718AAD3800064A9B5 /* ZipArchive.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE81AA218AAD3800064A9B5 /* ZipArchive.mm */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -104,6 +110,19 @@
 		1AD6BD2416669BF800E7E8E2 /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1AE77B961666BDEB009EA29E /* EJBindingDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingDeviceInfo.h; sourceTree = "<group>"; };
 		1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingDeviceInfo.m; sourceTree = "<group>"; };
+		1AE81A9218AAD29C0064A9B5 /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		1AE81A9418AAD3040064A9B5 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		1AE81A9818AAD3800064A9B5 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypt.h; sourceTree = "<group>"; };
+		1AE81A9918AAD3800064A9B5 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ioapi.c; sourceTree = "<group>"; };
+		1AE81A9A18AAD3800064A9B5 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi.h; sourceTree = "<group>"; };
+		1AE81A9B18AAD3800064A9B5 /* mztools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mztools.c; sourceTree = "<group>"; };
+		1AE81A9C18AAD3800064A9B5 /* mztools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mztools.h; sourceTree = "<group>"; };
+		1AE81A9D18AAD3800064A9B5 /* unzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = unzip.c; sourceTree = "<group>"; };
+		1AE81A9E18AAD3800064A9B5 /* unzip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unzip.h; sourceTree = "<group>"; };
+		1AE81A9F18AAD3800064A9B5 /* zip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = zip.c; sourceTree = "<group>"; };
+		1AE81AA018AAD3800064A9B5 /* zip.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zip.h; sourceTree = "<group>"; };
+		1AE81AA118AAD3800064A9B5 /* ZipArchive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZipArchive.h; sourceTree = "<group>"; };
+		1AE81AA218AAD3800064A9B5 /* ZipArchive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ZipArchive.mm; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* PenyoPlanet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenyoPlanet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -213,6 +232,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1AE81A9518AAD3040064A9B5 /* libz.dylib in Frameworks */,
 				1A8A39E516AB2579003C6E36 /* StoreKit.framework in Frameworks */,
 				1A620C1C162DDE7000E2F69B /* CoreData.framework in Frameworks */,
 				B6F463A41636C3FB00FC89C1 /* SystemConfiguration.framework in Frameworks */,
@@ -244,6 +264,32 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1AE81A9618AAD3800064A9B5 /* ZipArchive */ = {
+			isa = PBXGroup;
+			children = (
+				1AE81A9718AAD3800064A9B5 /* minizip */,
+				1AE81AA118AAD3800064A9B5 /* ZipArchive.h */,
+				1AE81AA218AAD3800064A9B5 /* ZipArchive.mm */,
+			);
+			path = ZipArchive;
+			sourceTree = "<group>";
+		};
+		1AE81A9718AAD3800064A9B5 /* minizip */ = {
+			isa = PBXGroup;
+			children = (
+				1AE81A9818AAD3800064A9B5 /* crypt.h */,
+				1AE81A9918AAD3800064A9B5 /* ioapi.c */,
+				1AE81A9A18AAD3800064A9B5 /* ioapi.h */,
+				1AE81A9B18AAD3800064A9B5 /* mztools.c */,
+				1AE81A9C18AAD3800064A9B5 /* mztools.h */,
+				1AE81A9D18AAD3800064A9B5 /* unzip.c */,
+				1AE81A9E18AAD3800064A9B5 /* unzip.h */,
+				1AE81A9F18AAD3800064A9B5 /* zip.c */,
+				1AE81AA018AAD3800064A9B5 /* zip.h */,
+			);
+			path = minizip;
+			sourceTree = "<group>";
+		};
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
@@ -259,6 +305,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1AE81A9418AAD3040064A9B5 /* libz.dylib */,
+				1AE81A9218AAD29C0064A9B5 /* libz.1.2.5.dylib */,
 				B64CE60C1666825F0087CF94 /* libJavaScriptCore.a */,
 				B66F1E7F1476B6A40090D208 /* libstdc++.dylib */,
 				B66F1E771476B3AC0090D208 /* libicucore.dylib */,
@@ -406,6 +454,7 @@
 		B64CE652166682700087CF94 /* lib */ = {
 			isa = PBXGroup;
 			children = (
+				1AE81A9618AAD3800064A9B5 /* ZipArchive */,
 				B64CE653166682700087CF94 /* JavaScriptCore */,
 				B64CE65E166682700087CF94 /* lodepng */,
 			);
@@ -565,14 +614,18 @@
 				B64CE662166682700087CF94 /* EJApp.m in Sources */,
 				B64CE663166682700087CF94 /* EJAudioSourceAVAudio.m in Sources */,
 				B64CE664166682700087CF94 /* EJAudioSourceOpenAL.m in Sources */,
+				1AE81AA618AAD3800064A9B5 /* zip.c in Sources */,
 				B64CE665166682700087CF94 /* EJBindingAudio.m in Sources */,
 				B64CE666166682700087CF94 /* EJOpenALBuffer.m in Sources */,
 				B64CE667166682700087CF94 /* EJOpenALManager.m in Sources */,
+				1AE81AA318AAD3800064A9B5 /* ioapi.c in Sources */,
 				B64CE668166682700087CF94 /* EJBindingBase.m in Sources */,
 				B64CE669166682700087CF94 /* EJBindingEjectaCore.m in Sources */,
+				1AE81AA718AAD3800064A9B5 /* ZipArchive.mm in Sources */,
 				B64CE66A166682700087CF94 /* EJBindingEventedBase.m in Sources */,
 				B64CE66B166682700087CF94 /* EAGLView.m in Sources */,
 				B64CE66C166682700087CF94 /* EJBindingCanvas.m in Sources */,
+				1AE81AA418AAD3800064A9B5 /* mztools.c in Sources */,
 				B64CE66D166682700087CF94 /* EJBindingImage.m in Sources */,
 				B64CE66E166682700087CF94 /* EJBindingImageData.m in Sources */,
 				B64CE66F166682700087CF94 /* EJCanvasContext.m in Sources */,
@@ -594,6 +647,7 @@
 				B64CE67F166682700087CF94 /* AppDelegate.m in Sources */,
 				B64CE681166682700087CF94 /* lodepng.c in Sources */,
 				B64CE682166682700087CF94 /* main.m in Sources */,
+				1AE81AA518AAD3800064A9B5 /* unzip.c in Sources */,
 				1AD6BD2516669BF800E7E8E2 /* EJBindingColourizeFilter.m in Sources */,
 				1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */,
 				1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */,
