@@ -18,7 +18,7 @@
 		1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1C16669BF800E7E8E2 /* EJBindingGrayscaleFilter.m */; };
 		1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */; };
 		1AD6BD2816669BF800E7E8E2 /* EJBindingTextInput.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */; };
-		1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */; };
+		1AD6BD2916669BF800E7E8E2 /* EJBindingEpisodeDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2216669BF800E7E8E2 /* EJBindingEpisodeDownloader.m */; };
 		1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */; };
 		1AE77B981666BDEB009EA29E /* EJBindingDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */; };
 		1AE81A9518AAD3040064A9B5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AE81A9418AAD3040064A9B5 /* libz.dylib */; };
@@ -105,8 +105,8 @@
 		1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingLoadingScreen.m; sourceTree = "<group>"; };
 		1AD6BD1F16669BF800E7E8E2 /* EJBindingTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingTextInput.h; sourceTree = "<group>"; };
 		1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingTextInput.m; sourceTree = "<group>"; };
-		1AD6BD2116669BF800E7E8E2 /* EJBindingURLFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingURLFetcher.h; sourceTree = "<group>"; };
-		1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingURLFetcher.m; sourceTree = "<group>"; };
+		1AD6BD2116669BF800E7E8E2 /* EJBindingEpisodeDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingEpisodeDownloader.h; sourceTree = "<group>"; };
+		1AD6BD2216669BF800E7E8E2 /* EJBindingEpisodeDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingEpisodeDownloader.m; sourceTree = "<group>"; };
 		1AD6BD2416669BF800E7E8E2 /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1AE77B961666BDEB009EA29E /* EJBindingDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingDeviceInfo.h; sourceTree = "<group>"; };
 		1AE77B971666BDEB009EA29E /* EJBindingDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingDeviceInfo.m; sourceTree = "<group>"; };
@@ -430,8 +430,8 @@
 				1AD6BD1E16669BF800E7E8E2 /* EJBindingLoadingScreen.m */,
 				1AD6BD1F16669BF800E7E8E2 /* EJBindingTextInput.h */,
 				1AD6BD2016669BF800E7E8E2 /* EJBindingTextInput.m */,
-				1AD6BD2116669BF800E7E8E2 /* EJBindingURLFetcher.h */,
-				1AD6BD2216669BF800E7E8E2 /* EJBindingURLFetcher.m */,
+				1AD6BD2116669BF800E7E8E2 /* EJBindingEpisodeDownloader.h */,
+				1AD6BD2216669BF800E7E8E2 /* EJBindingEpisodeDownloader.m */,
 				1AD6BD2316669BF800E7E8E2 /* EJLocalStored.xcdatamodeld */,
 				B64CE643166682700087CF94 /* EJBindingAccelerometer.h */,
 				B64CE644166682700087CF94 /* EJBindingAccelerometer.m */,
@@ -652,7 +652,7 @@
 				1AD6BD2616669BF800E7E8E2 /* EJBindingGrayscaleFilter.m in Sources */,
 				1AD6BD2716669BF800E7E8E2 /* EJBindingLoadingScreen.m in Sources */,
 				1AD6BD2816669BF800E7E8E2 /* EJBindingTextInput.m in Sources */,
-				1AD6BD2916669BF800E7E8E2 /* EJBindingURLFetcher.m in Sources */,
+				1AD6BD2916669BF800E7E8E2 /* EJBindingEpisodeDownloader.m in Sources */,
 				1AD6BD2A16669BF800E7E8E2 /* EJLocalStored.xcdatamodeld in Sources */,
 				1AE77B981666BDEB009EA29E /* EJBindingDeviceInfo.m in Sources */,
 				1A8A39E216AB239B003C6E36 /* EJBindingInAppPurchase.m in Sources */,

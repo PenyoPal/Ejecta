@@ -8,7 +8,7 @@
 
 #import "EJBindingBase.h"
 
-@interface EJBindingURLFetcher : EJBindingBase <NSURLConnectionDataDelegate>
+@interface EJBindingEpisodeDownloader : EJBindingBase <NSURLConnectionDataDelegate>
 {
     NSString *saveToPath;
 	JSObjectRef successCb;

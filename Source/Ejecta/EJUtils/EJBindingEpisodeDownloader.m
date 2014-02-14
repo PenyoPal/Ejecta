@@ -6,9 +6,10 @@
 //
 //
 
-#import "EJBindingURLFetcher.h"
+#import "EJBindingEpisodeDownloader.h"
+#import "ZipArchive.h"
 
-@implementation EJBindingURLFetcher
+@implementation EJBindingEpisodeDownloader
 
 #pragma mark - Lifecycle
 - (id)initWithContext:(JSContextRef)ctxp
@@ -87,8 +88,10 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 			NSLog(@"Failed to create directory! %@", err.localizedDescription);
 			if (errorCb) {
 				JSValueRef params[] = {};
-				[[EJApp instance] invokeCallback:errorCb thisObject:NULL
-											argc:0 argv:params];
+				[[EJApp instance] invokeCallback:errorCb
+                                      thisObject:NULL
+											argc:0
+                                            argv:params];
 			}
 			[connection release];
 			[responseData release];
@@ -107,9 +110,19 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 			[[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
 		}
 	} else {
-		if (successCb) {
-			[[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
-		}
+        // Extract episode zip
+        ZipArchive *unzipper = [[ZipArchive alloc] init];
+        [unzipper UnzipOpenFile:[fileURL path]];
+        if ([unzipper UnzipFileTo:[[fileURL URLByDeletingLastPathComponent] path] overWrite:YES]) {
+            if (successCb) {
+                [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
+            }
+        } else {
+            if (errorCb) {
+                [[EJApp instance] invokeCallback:errorCb
+                                      thisObject:NULL argc:0 argv:params];
+            }
+        }
 	}
 	[connection release];
 	[responseData release];
@@ -119,7 +132,7 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 }
 
 #pragma mark - EJBinding
-EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
+EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
     if (argc < 2) return NULL;
 
 	[self cancel];
@@ -136,7 +149,7 @@ EJ_BIND_FUNCTION(fetchRemoteUrl, ctx, argc, argv) {
 	}
     
     NSURLRequest *req = [NSURLRequest requestWithURL:remoteUrl
-                         cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                         cachePolicy:NSURLRequestUseProtocolCachePolicy
                                      timeoutInterval:60.0];
     connection = [[NSURLConnection alloc] initWithRequest:req
 												 delegate:self];
