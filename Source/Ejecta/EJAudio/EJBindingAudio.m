@@ -61,7 +61,7 @@
 	NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
 	
 	// Decide whether to load the sound as OpenAL or AVAudioPlayer source
-	unsigned long long size = [[[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:nil] fileSize];
+	//unsigned long long size = [[[NSFileManager defaultManager] attributesOfItemAtPath:fullPath error:nil] fileSize];
 	
 	NSObject<EJAudioSource> * src;
 	/*

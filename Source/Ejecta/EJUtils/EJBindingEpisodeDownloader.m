@@ -114,10 +114,12 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
         ZipArchive *unzipper = [[ZipArchive alloc] init];
         [unzipper UnzipOpenFile:[fileURL path]];
         if ([unzipper UnzipFileTo:[[fileURL URLByDeletingLastPathComponent] path] overWrite:YES]) {
+            NSLog(@"Unzipped content");
             if (successCb) {
                 [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
             }
         } else {
+            NSLog(@"Error unzipping download");
             if (errorCb) {
                 [[EJApp instance] invokeCallback:errorCb
                                       thisObject:NULL argc:0 argv:params];
