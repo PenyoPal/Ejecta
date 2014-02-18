@@ -115,8 +115,16 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
         [unzipper UnzipOpenFile:[fileURL path]];
         if ([unzipper UnzipFileTo:[[fileURL URLByDeletingLastPathComponent] path] overWrite:YES]) {
             NSLog(@"Unzipped content");
-            if (successCb) {
-                [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:0 argv:params];
+            NSURL *episodeJsonURL = [[fileURL URLByDeletingPathExtension] URLByAppendingPathComponent:@"episode.json"];
+            NSString *episodeJson = [NSString stringWithContentsOfURL:episodeJsonURL encoding:NSUTF8StringEncoding error:&err];
+            if (err || !episodeJson) {
+                if (errorCb) {
+                    [[EJApp instance] invokeCallback:errorCb
+                                          thisObject:NULL argc:0 argv:params];
+                }
+            } else if (successCb) {
+                JSValueRef succParams[] = { NSStringToJSValue([EJApp instance].jsGlobalContext, episodeJson) };
+                [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:1 argv:succParams];
             }
         } else {
             NSLog(@"Error unzipping download");
