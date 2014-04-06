@@ -8,13 +8,11 @@
 
 #import "EJBindingBase.h"
 
-@interface EJBindingEpisodeDownloader : EJBindingBase <NSURLConnectionDataDelegate>
+@interface EJBindingEpisodeDownloader : EJBindingBase
 {
     NSString *saveToPath;
 	JSObjectRef successCb;
 	JSObjectRef errorCb;
-    NSMutableData *responseData;
-	NSURLConnection *connection;
 }
 
 @end

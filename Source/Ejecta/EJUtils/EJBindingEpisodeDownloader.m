@@ -9,6 +9,15 @@
 #import "EJBindingEpisodeDownloader.h"
 #import "ZipArchive.h"
 
+@interface EJBindingEpisodeDownloader ()
+{
+    BOOL _downloadImages;
+    NSData *_episodeContent;
+    NSData *_episodeImages;
+}
+
+@end
+
 @implementation EJBindingEpisodeDownloader
 
 #pragma mark - Lifecycle
@@ -19,16 +28,13 @@
 {
     if (self =  [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
 		errorCb = successCb = NULL;
+        _downloadImages = NO;
     }
     return self;
 }
 
 - (void)cancel
 {
-	if (connection) {
-		[connection cancel];
-		[connection release];
-	}
 	JSContextRef gctx = [EJApp instance].jsGlobalContext;
 	if (errorCb) {
 		JSValueUnprotect(gctx, errorCb);
@@ -38,21 +44,14 @@
 		JSValueUnprotect(gctx, successCb);
 		successCb = NULL;
 	}
-	if (responseData) {
-		[responseData release];
-	}
 	if (saveToPath) {
 		[saveToPath release];
 	}
 }
 
-#pragma mark - NSURLConnectionDataDelegate
-- (void)connection:(NSURLConnection *)conn
-didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+#pragma mark - Downloading content
+- (void)connectionFailed
 {
-    [connection cancel];
-    [connection release];
-
     if( errorCb ) {
         JSContextRef gctx = [EJApp instance].jsGlobalContext;
         JSValueRef params[] = { };
@@ -63,16 +62,11 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
     }
 }
 
-- (void)connection:(NSURLConnection *)conn didReceiveData:(NSData *)data
-{
-	[responseData appendData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)conn
+- (BOOL)extractZipFrom:(NSData *)data toPath:(NSString *)path
 {
 	NSURL *fileURL = [NSURL fileURLWithPathComponents:
 					  [NSArray arrayWithObjects:NSHomeDirectory(),
-					   @"Library", saveToPath, nil]];
+					   @"Library", path, nil]];
 
 	NSLog(@"Downloaded data, saving to %@", fileURL);
 	BOOL isDir = NO;
@@ -86,59 +80,49 @@ didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 		 withIntermediateDirectories:YES attributes:nil error:&err];
 		if (err) {
 			NSLog(@"Failed to create directory! %@", err.localizedDescription);
-			if (errorCb) {
-				JSValueRef params[] = {};
-				[[EJApp instance] invokeCallback:errorCb
-                                      thisObject:NULL
-											argc:0
-                                            argv:params];
-			}
-			[connection release];
-			[responseData release];
-			JSContextRef gctx = [EJApp instance].jsGlobalContext;
-			JSValueUnprotect(gctx, successCb);
-			JSValueUnprotect(gctx, errorCb);
-			return;
+			return NO;
 		}
 	}
 	NSError *err = nil;
-	[responseData writeToURL:fileURL options:NSDataWritingAtomic error:&err];
-	JSValueRef params[] = { };
+	[data writeToURL:fileURL options:NSDataWritingAtomic error:&err];
 	if (err) {
 		NSLog(@"Error writing data out: %@", err.localizedDescription);
-		if (errorCb) {
-			[[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
-		}
+		return NO;
 	} else {
         // Extract episode zip
         ZipArchive *unzipper = [[ZipArchive alloc] init];
         [unzipper UnzipOpenFile:[fileURL path]];
         if ([unzipper UnzipFileTo:[[fileURL URLByDeletingLastPathComponent] path] overWrite:YES]) {
             NSLog(@"Unzipped content");
-            NSURL *episodeJsonURL = [[fileURL URLByDeletingPathExtension] URLByAppendingPathComponent:@"episode.json"];
-            NSString *episodeJson = [NSString stringWithContentsOfURL:episodeJsonURL encoding:NSUTF8StringEncoding error:&err];
-            if (err || !episodeJson) {
-                if (errorCb) {
-                    [[EJApp instance] invokeCallback:errorCb
-                                          thisObject:NULL argc:0 argv:params];
-                }
-            } else if (successCb) {
-                JSValueRef succParams[] = { NSStringToJSValue([EJApp instance].jsGlobalContext, episodeJson) };
-                [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:1 argv:succParams];
-            }
+            return YES;
         } else {
             NSLog(@"Error unzipping download");
-            if (errorCb) {
-                [[EJApp instance] invokeCallback:errorCb
-                                      thisObject:NULL argc:0 argv:params];
-            }
+            return NO;
         }
 	}
-	[connection release];
-	[responseData release];
-	JSContextRef gctx = [EJApp instance].jsGlobalContext;
-	JSValueUnprotect(gctx, successCb);
-	JSValueUnprotect(gctx, errorCb);
+}
+
+- (void)downloadSuccess
+{
+    NSURL *fileURL = [NSURL fileURLWithPathComponents:
+					  [NSArray arrayWithObjects:NSHomeDirectory(),
+					   @"Library", saveToPath, nil]];
+    NSError *err = nil;
+    NSURL *episodeJsonURL = [[fileURL URLByDeletingPathExtension] URLByAppendingPathComponent:@"episode.json"];
+    NSString *episodeJson = [NSString stringWithContentsOfURL:episodeJsonURL encoding:NSUTF8StringEncoding error:&err];
+    if (err || !episodeJson) {
+        if (errorCb) {
+            JSValueRef params[] = { };
+            [[EJApp instance] invokeCallback:errorCb
+                                  thisObject:NULL argc:0 argv:params];
+        }
+    } else if (successCb) {
+        JSValueRef succParams[] = { NSStringToJSValue([EJApp instance].jsGlobalContext, episodeJson) };
+        [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:1 argv:succParams];
+    }
+    JSContextRef gctx = [EJApp instance].jsGlobalContext;
+    JSValueUnprotect(gctx, successCb);
+    JSValueUnprotect(gctx, errorCb);
 }
 
 #pragma mark - EJBinding
@@ -157,16 +141,74 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
 		errorCb = JSValueToObject(ctx, argv[3], NULL);
         JSValueProtect(ctx, errorCb);
 	}
-    
-    NSURLRequest *req = [NSURLRequest requestWithURL:remoteUrl
+
+    __block BOOL contentFailed = NO, imagesFailed = !_downloadImages;
+
+    dispatch_group_t group = dispatch_group_create();
+    NSURLRequest *contentReq = [NSURLRequest requestWithURL:remoteUrl
                                          cachePolicy:NSURLRequestUseProtocolCachePolicy
                                      timeoutInterval:60.0];
-    connection = [[NSURLConnection alloc] initWithRequest:req
-												 delegate:self];
+    dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 
-	responseData = [[NSMutableData alloc] initWithCapacity:1024 * 10];
-    [connection start];
+    dispatch_group_async(group, queue, ^{
+        NSURLResponse *response; NSError *connectionError = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:contentReq
+                                             returningResponse:&response
+                                                         error:&connectionError];
+        if (connectionError) {
+            contentFailed = YES;
+        } else {
+            _episodeContent = [data retain];
+        }
+    });
+
+    if (_downloadImages) {
+        NSString *episodeFileName = [remoteUrl lastPathComponent];
+        NSURL *imagesUrl = [[NSURL URLWithString:[NSString stringWithFormat:@"../images/%@", episodeFileName]
+                                  relativeToURL:remoteUrl] absoluteURL];
+        NSURLRequest *imagesReq = [NSURLRequest requestWithURL:imagesUrl
+                                                   cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                               timeoutInterval:60.0];
+        dispatch_group_async(group, queue, ^{
+            NSURLResponse *response; NSError *connectionError = nil;
+            NSData *data = [NSURLConnection sendSynchronousRequest:imagesReq
+                                                 returningResponse:&response
+                                                             error:&connectionError];
+            if (connectionError) {
+                imagesFailed = YES;
+            } else {
+                _episodeImages = [data retain];
+            }
+        });
+    }
+    
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^{
+        if (contentFailed || imagesFailed) {
+            [self connectionFailed];
+        } else {
+            BOOL contentOk = [self extractZipFrom:_episodeContent toPath:saveToPath];
+            BOOL imagesOk = YES;
+            if (_downloadImages && contentOk) {
+                NSString *imagesPath = [NSString stringWithFormat:@"assets/%@", [remoteUrl lastPathComponent]];
+                imagesOk = [self extractZipFrom:_episodeImages toPath:imagesPath];
+            }
+            if (imagesOk && contentOk) {
+                [self downloadSuccess];
+            } else {
+                [self connectionFailed];
+            }
+            [_episodeImages release];
+            [_episodeContent release];
+            // TODO: destroy queue & group?
+        }
+    });
     return NULL;
+}
+
+EJ_BIND_GET(getImages, ctx) { return JSValueMakeBoolean(ctx, _downloadImages); }
+
+EJ_BIND_SET(getImages, ctx, value) {
+    _downloadImages = JSValueToBoolean(ctx, value);
 }
 
 @end
