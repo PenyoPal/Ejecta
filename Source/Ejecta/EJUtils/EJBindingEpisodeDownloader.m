@@ -111,6 +111,7 @@
     NSURL *episodeJsonURL = [[fileURL URLByDeletingPathExtension] URLByAppendingPathComponent:@"episode.json"];
     NSString *episodeJson = [NSString stringWithContentsOfURL:episodeJsonURL encoding:NSUTF8StringEncoding error:&err];
     if (err || !episodeJson) {
+        NSLog(@"Error getting JSON: %@ (%ul characters)", err, episodeJson.length);
         if (errorCb) {
             JSValueRef params[] = { };
             [[EJApp instance] invokeCallback:errorCb
@@ -142,7 +143,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
         JSValueProtect(ctx, errorCb);
 	}
 
-    __block BOOL contentFailed = NO, imagesFailed = !_downloadImages;
+    __block BOOL contentFailed = NO, imagesFailed = NO;
 
     dispatch_group_t group = dispatch_group_create();
     NSURLRequest *contentReq = [NSURLRequest requestWithURL:remoteUrl
@@ -156,6 +157,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
                                              returningResponse:&response
                                                          error:&connectionError];
         if (connectionError) {
+            NSLog(@"Error downloading content: %@", connectionError.localizedDescription);
             contentFailed = YES;
         } else {
             _episodeContent = [data retain];
@@ -184,6 +186,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
     
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
         if (contentFailed || imagesFailed) {
+            NSLog(@"Download failed: content = %d, images = %d", contentFailed, imagesFailed);
             [self connectionFailed];
         } else {
             BOOL contentOk = [self extractZipFrom:_episodeContent toPath:saveToPath];
@@ -195,6 +198,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
             if (imagesOk && contentOk) {
                 [self downloadSuccess];
             } else {
+                NSLog(@"Unzipping failed: images = %d, content = %d", imagesOk, contentOk);
                 [self connectionFailed];
             }
             [_episodeImages release];
