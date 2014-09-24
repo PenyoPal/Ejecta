@@ -1,150 +1,183 @@
 #import "EJConvert.h"
 
-NSString * JSValueToNSString( JSContextRef ctx, JSValueRef v ) {
+NSString *JSValueToNSString( JSContextRef ctx, JSValueRef v ) {
 	JSStringRef jsString = JSValueToStringCopy( ctx, v, NULL );
 	if( !jsString ) return nil;
 	
-	NSString * string = (NSString *)JSStringCopyCFString( kCFAllocatorDefault, jsString );
+	NSString *string = (NSString *)JSStringCopyCFString( kCFAllocatorDefault, jsString );
 	[string autorelease];
 	JSStringRelease( jsString );
 	
 	return string;
 }
 
-JSValueRef NSStringToJSValue( JSContextRef ctx, NSString * string ) {
+JSValueRef NSStringToJSValue( JSContextRef ctx, NSString *string ) {
 	JSStringRef jstr = JSStringCreateWithCFString((CFStringRef)string);
 	JSValueRef ret = JSValueMakeString(ctx, jstr);
 	JSStringRelease(jstr);
 	return ret;
 }
 
-JSValueRef NSStringToJSValueProtect( JSContextRef ctx, NSString * string ) {
-	JSValueRef ret = NSStringToJSValue( ctx, string );
-	JSValueProtect(ctx, ret);
-	return ret;
-}
 
-double JSValueToNumberFast( JSContextRef ctx, JSValueRef v ) {
-	unsigned char * bytes = ((unsigned char *) v) + 8;
-	unsigned char * tagBytes = ((unsigned char *) v) + 12;
-	int32_t unionTag = *((int32_t*)tagBytes);
-	if( unionTag < 0xfffffff8 ) {
-		return *((double *) bytes);
-	}
-	else {
-		return *((int32_t *) bytes);
-	}
-}
+// JSValueToNumberFast blindly assumes that the given JSValueRef is a
+// a number. Everything else will be silently converted to 0.
+// This functions comes in a 64bit and 32bit flavor, since the NaN-Boxing
+// in JSC works a bit differently on each platforms. For an explanation
+// of the taggging refer to JSC/runtime/JSCJSValue.h
 
-EJColorRGBA JSValueToColorRGBA(JSContextRef ctx, JSValueRef value) {
-	EJColorRGBA c = {.hex = 0xff000000};
-	if( !JSValueIsString(ctx, value) ) { return c; }
-	
-	JSStringRef jsString = JSValueToStringCopy( ctx, value, NULL );
-	int length = JSStringGetLength( jsString );
-	
-	const JSChar * jsc = JSStringGetCharactersPtr(jsString);
-	char str[] = "ffffff";
-	
-	// #f0f format
-	if( length == 4 ) {
-		str[0] = str[1] = jsc[3];
-		str[2] = str[3] = jsc[2];
-		str[4] = str[5] = jsc[1];
-		c.hex = 0xff000000 | strtol( str, NULL, 16 );
-	}
-	
-	// #ff00ff format
-	else if( length == 7 ) {
-		str[0] = jsc[5];
-		str[1] = jsc[6];
-		str[2] = jsc[3];
-		str[3] = jsc[4];
-		str[4] = jsc[1];
-		str[5] = jsc[2];
-		c.hex = 0xff000000 | strtol( str, NULL, 16 );
-	}
-	
-	// assume rgb(255,0,255) or rgba(255,0,255,0.5) format
-	else {
-		int current = 0;
-		for( int i = 4; i < length-1 && current < 4; i++ ) {
-			if( current == 3 ) {
-				// If we have an alpha component, copy the rest of the wide
-				// string into a char array and use atof() to parse it.
-				char alpha[8] = { 0,0,0,0, 0,0,0,0 };
-				for( int j = 0; i + j < length-1 && j < 7; j++ ) {
-					alpha[j] = jsc[i+j];
-				}
-				c.components[current] = atof(alpha) * 255.0f;
-				current++;
-			}
-			else if( isdigit(jsc[i]) ) {
-				c.components[current] = c.components[current] * 10 + (jsc[i] - '0'); 
-			}
-			else if( jsc[i] == ',' || jsc[i] == ')' ) {
-				current++;
-			}
+#if __LP64__ // arm64 version
+	double JSValueToNumberFast(JSContextRef ctx, JSValueRef v) {
+		union {
+			int64_t asInt64;
+			double asDouble;
+			struct { int32_t asInt; int32_t tag; } asBits;
+		} taggedValue = { .asInt64 = (int64_t)v };
+		
+		#define DoubleEncodeOffset 0x1000000000000ll
+		#define TagTypeNumber 0xffff0000
+		#define ValueTrue 0x7
+		
+		if( (taggedValue.asBits.tag & TagTypeNumber) == TagTypeNumber ) {
+			return taggedValue.asBits.asInt;
+		}
+		else if( taggedValue.asBits.tag & TagTypeNumber ) {
+			taggedValue.asInt64 -= DoubleEncodeOffset;
+			return taggedValue.asDouble;
+		}
+		else if( taggedValue.asBits.asInt == ValueTrue ) {
+			return 1.0;
+		}
+		else {
+			return 0; // false, undefined, null, object
 		}
 	}
-	JSStringRelease(jsString);
-	return c;
-}
-
-JSValueRef ColorRGBAToJSValue( JSContextRef ctx, EJColorRGBA c ) {
-	static char buffer[32];
-	sprintf(buffer, "rgba(%d,%d,%d,%.3f)", c.rgba.r, c.rgba.g, c.rgba.b, (float)c.rgba.a/255.0f );
-	
-	JSStringRef src = JSStringCreateWithUTF8CString( buffer );
-	JSValueRef ret = JSValueMakeString(ctx, src);
-	JSStringRelease(src);
-	return ret;
-}
-
-JSObjectRef ByteArrayToJSObject( JSContextRef ctx, unsigned char * bytes, int count ) {
-	// This creates a JSON string from a byte array and then uses the JSC APIs
-	// JSValueMakeFromJSONString function to convert it into a JSObject that
-	// is an array. It's faster than repeatedly calling JSValueMakeNumber and
-	// JSValueMakeArray.
-
-	// This sucks. Where's the JSC API for ByteArrays?
-	
-	
-	if( count < 1 ) {
-		return JSObjectMakeArray(ctx, 0, NULL, NULL);
-	}
-	
-	// Build the JSON string from the byte array
-	int bufferLength = count * 4 + 3; // Max 4 chars per element + "[]\0"
-	char * jsonBuffer = (char *)malloc( bufferLength );
+#else // armv7 version
+	double JSValueToNumberFast( JSContextRef ctx, JSValueRef v ) {
+		struct {
+			unsigned char cppClassData[4];
+			union {
+				double asDouble;
+				struct { int32_t asInt; int32_t tag; } asBits;
+			} payload;
+		} *decoded = (void *)v;
 		
-	jsonBuffer[0] = '[';
-	int pos = 0;
-	for( int i = 0; i < count; i++ ) {
-		unsigned char n = *(bytes + i);
-		if( n > 99 ) { jsonBuffer[++pos] = (n / 100) + '0'; }
-		if( n > 9 ) { jsonBuffer[++pos] = ((n % 100)/10) + '0'; }
-		jsonBuffer[++pos] = (n % 10) + '0';
-		jsonBuffer[++pos] = ',';
+		return decoded->payload.asBits.tag < 0xfffffff9
+			? decoded->payload.asDouble
+			: decoded->payload.asBits.asInt;
 	}
-	
-	jsonBuffer[pos] = ']'; // overwrite last comma
-	jsonBuffer[++pos] = '\0';
-	
-	// Convert the json string to an object
-	JSStringRef jss = JSStringCreateWithUTF8CString(jsonBuffer);
-	JSObjectRef array = (JSObjectRef)JSValueMakeFromJSONString(ctx, jss);
-	
-	free(jsonBuffer);
-	JSStringRelease(jss);
-	
-	return array;
+#endif
+
+void JSValueUnprotectSafe( JSContextRef ctx, JSValueRef v ) {
+	if( ctx && v ) {
+		JSValueUnprotect(ctx, v);
+	}
 }
 
-void JSObjectToByteArray( JSContextRef ctx, JSObjectRef array, unsigned char * bytes, int count ) {
-	// Converting a JSArray to byte buffer seems to be faster without the JSON intermediate
-	for( int i = 0; i < count; i++ ) {
-		bytes[i] = JSValueToNumberFast(ctx, JSObjectGetPropertyAtIndex(ctx, array, i, NULL));
+JSValueRef NSObjectToJSValue( JSContextRef ctx, NSObject *obj ) {
+	JSValueRef ret = NULL;
+	
+	// String
+	if( [obj isKindOfClass:NSString.class] ) {
+		ret = NSStringToJSValue(ctx, (NSString *)obj);
 	}
+	
+	// Number or Bool
+	else if( [obj isKindOfClass:NSNumber.class] ) {
+		NSNumber *number = (NSNumber *)obj;
+		if( strcmp(number.objCType, @encode(BOOL)) == 0 ) {
+			ret = JSValueMakeBoolean(ctx, number.boolValue);
+		}
+		else {
+			ret = JSValueMakeNumber(ctx, number.doubleValue);
+		}
+	}
+	
+	// Date
+	else if( [obj isKindOfClass:NSDate.class] ) {
+		NSDate *date = (NSDate *)obj;
+		JSValueRef timestamp = JSValueMakeNumber(ctx, date.timeIntervalSince1970 * 1000.0);
+		ret = JSObjectMakeDate(ctx, 1, &timestamp, NULL);
+	}
+	
+	// Array
+	else if( [obj isKindOfClass:NSArray.class] ) {
+		NSArray *array = (NSArray *)obj;
+		JSValueRef *args = malloc(array.count * sizeof(JSValueRef));
+		for( int i = 0; i < array.count; i++ ) {
+			args[i] = NSObjectToJSValue(ctx, array[i] );
+		}
+		ret = JSObjectMakeArray(ctx, array.count, args, NULL);
+		free(args);
+	}
+	
+	// Dictionary
+	else if( [obj isKindOfClass:NSDictionary.class] ) {
+		NSDictionary *dict = (NSDictionary *)obj;
+		ret = JSObjectMake(ctx, NULL, NULL);
+		for( NSString *key in dict ) {
+			JSStringRef jsKey = JSStringCreateWithUTF8CString(key.UTF8String);
+			JSValueRef value = NSObjectToJSValue(ctx, dict[key]);
+			JSObjectSetProperty(ctx, (JSObjectRef)ret, jsKey, value, NULL, NULL);
+			JSStringRelease(jsKey);
+		}
+	}
+	
+	return ret ? ret : JSValueMakeNull(ctx);
+}
+
+NSObject *JSValueToNSObject( JSContextRef ctx, JSValueRef value ) {
+	JSType type = JSValueGetType(ctx, value);
+	
+	switch( type ) {
+		case kJSTypeString: return JSValueToNSString(ctx, value);
+		case kJSTypeBoolean: return [NSNumber numberWithBool:JSValueToBoolean(ctx, value)];
+		case kJSTypeNumber: return [NSNumber numberWithDouble:JSValueToNumberFast(ctx, value)];
+		case kJSTypeNull: return nil;
+		case kJSTypeUndefined: return nil;
+		case kJSTypeObject: break;
+	}
+	
+	if( type == kJSTypeObject ) {
+		JSObjectRef jsObj = (JSObjectRef)value;
+		
+		// Get the Array constructor to check if this Object is an Array
+		JSStringRef arrayName = JSStringCreateWithUTF8CString("Array");
+		JSObjectRef arrayConstructor = (JSObjectRef)JSObjectGetProperty(ctx, JSContextGetGlobalObject(ctx), arrayName, NULL);
+		JSStringRelease(arrayName);
+			
+		if( JSValueIsInstanceOfConstructor(ctx, jsObj, arrayConstructor, NULL) ) {
+			// Array
+			JSStringRef lengthName = JSStringCreateWithUTF8CString("length");
+			int count = JSValueToNumberFast(ctx, JSObjectGetProperty(ctx, jsObj, lengthName, NULL));
+			JSStringRelease(lengthName);
+			
+			NSMutableArray *array = [NSMutableArray arrayWithCapacity:count];
+			for( int i = 0; i < count; i++ ) {
+				NSObject *obj = JSValueToNSObject(ctx, JSObjectGetPropertyAtIndex(ctx, jsObj, i, NULL));
+				[array addObject:(obj ? obj : NSNull.null)];
+			}
+			return array;
+		}
+		else {
+			// Plain Object
+			JSPropertyNameArrayRef properties = JSObjectCopyPropertyNames(ctx, jsObj);
+			size_t count = JSPropertyNameArrayGetCount(properties);
+			
+			NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:count];
+			for( size_t i = 0; i < count; i++ ) {
+				JSStringRef jsName = JSPropertyNameArrayGetNameAtIndex(properties, i);
+				NSObject *obj = JSValueToNSObject(ctx, JSObjectGetProperty(ctx, jsObj, jsName, NULL));
+				
+				NSString *name = (NSString *)JSStringCopyCFString( kCFAllocatorDefault, jsName );
+				dict[name] = obj ? obj : NSNull.null;
+				[name release];
+			}
+			
+			JSPropertyNameArrayRelease(properties);
+			return dict;
+		}
+	}
+	
+	return nil;
 }
 

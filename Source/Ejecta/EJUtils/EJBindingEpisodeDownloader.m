@@ -22,11 +22,10 @@
 
 #pragma mark - Lifecycle
 - (id)initWithContext:(JSContextRef)ctxp
-               object:(JSObjectRef)obj
                  argc:(size_t)argc
                  argv:(const JSValueRef [])argv
 {
-    if (self =  [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
+    if (self =  [super initWithContext:ctxp argc:argc argv:argv]) {
 		errorCb = successCb = NULL;
         _downloadImages = NO;
     }
@@ -35,7 +34,7 @@
 
 - (void)cancel
 {
-	JSContextRef gctx = [EJApp instance].jsGlobalContext;
+	JSContextRef gctx = scriptView.jsGlobalContext;
 	if (errorCb) {
 		JSValueUnprotect(gctx, errorCb);
 		errorCb = NULL;
@@ -53,9 +52,9 @@
 - (void)connectionFailed
 {
     if( errorCb ) {
-        JSContextRef gctx = [EJApp instance].jsGlobalContext;
+        JSContextRef gctx = scriptView.jsGlobalContext;
         JSValueRef params[] = { };
-        [[EJApp instance] invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
+        [scriptView invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
         JSValueUnprotect(gctx, errorCb);
 		JSValueUnprotect(gctx, successCb);
 		errorCb = successCb = NULL;
@@ -114,14 +113,14 @@
         NSLog(@"Error getting JSON: %@ (%ul characters)", err, episodeJson.length);
         if (errorCb) {
             JSValueRef params[] = { };
-            [[EJApp instance] invokeCallback:errorCb
+            [scriptView invokeCallback:errorCb
                                   thisObject:NULL argc:0 argv:params];
         }
     } else if (successCb) {
-        JSValueRef succParams[] = { NSStringToJSValue([EJApp instance].jsGlobalContext, episodeJson) };
-        [[EJApp instance] invokeCallback:successCb thisObject:NULL argc:1 argv:succParams];
+        JSValueRef succParams[] = { NSStringToJSValue(scriptView.jsGlobalContext, episodeJson) };
+        [scriptView invokeCallback:successCb thisObject:NULL argc:1 argv:succParams];
     }
-    JSContextRef gctx = [EJApp instance].jsGlobalContext;
+    JSContextRef gctx = scriptView.jsGlobalContext;
     JSValueUnprotect(gctx, successCb);
     JSValueUnprotect(gctx, errorCb);
 }
@@ -131,7 +130,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
     if (argc < 2) return NULL;
 
 	[self cancel];
-	
+
     NSURL *remoteUrl = [NSURL URLWithString:JSValueToNSString(ctx, argv[0])];
 	saveToPath = [JSValueToNSString(ctx, argv[1]) retain];
 	if( argc > 2 && JSValueIsObject(ctx, argv[2]) ) {
@@ -183,7 +182,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
             }
         });
     }
-    
+
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
         if (contentFailed || imagesFailed) {
             NSLog(@"Download failed: content = %d, images = %d", contentFailed, imagesFailed);

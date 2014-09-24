@@ -10,9 +10,9 @@
 
 @implementation EJBindingInAppPurchase
 
-- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj argc:(size_t)argc argv:(const JSValueRef [])argv
+- (id)initWithContext:(JSContextRef)ctxp argc:(size_t)argc argv:(const JSValueRef [])argv
 {
-	if (self = [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
+	if (self = [super initWithContext:ctxp argc:argc argv:argv]) {
 		[[SKPaymentQueue defaultQueue] addTransactionObserver:self];
 		requestingForPurchase = NO;
 	}
@@ -57,7 +57,7 @@
 			requestingForPurchase = NO;
 		} else {
 			// Create JS object with info to trigger callback with
-			JSContextRef ctx = [[EJApp instance] jsGlobalContext];
+			JSContextRef ctx = [scriptView jsGlobalContext];
 			JSObjectRef infoObj = JSObjectMake(ctx, NULL, NULL);
 			NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
 			[numberFormatter setFormatterBehavior:NSNumberFormatterBehavior10_4];

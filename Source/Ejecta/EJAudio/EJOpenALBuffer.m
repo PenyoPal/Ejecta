@@ -2,15 +2,27 @@
 
 #import <AudioToolbox/AudioToolbox.h>
 #import <AudioToolbox/ExtendedAudioFile.h>
+#import "EJAppViewController.h"
+#import "EJJavaScriptView.h"
 
 @implementation EJOpenALBuffer
-
 @synthesize bufferId;
+@synthesize duration;
+
++ (id)cachedBufferWithPath:(NSString *)path {
+	EJOpenALBuffer *buffer = [EJSharedOpenALManager instance].buffers[path];
+	if( !buffer ) {
+		buffer = [[[EJOpenALBuffer alloc] initWithPath:path] autorelease];
+		[EJSharedOpenALManager instance].buffers[path] = buffer;
+	}
+	return buffer;
+}
 
 - (id)initWithPath:(NSString *)pathp {
 	if( self = [super init] ) {
-		NSURL * url = [NSURL fileURLWithPath:pathp];
-		void * data = [self getAudioDataWithURL:url];
+		path = [pathp retain];
+		NSURL *url = [NSURL fileURLWithPath:pathp];
+		void *data = [self getAudioDataWithURL:url];
 
 		if( data ) {
 			alGenBuffers( 1, &bufferId );
@@ -22,6 +34,9 @@
 }
 
 - (void)dealloc {
+	[[EJSharedOpenALManager instance].buffers removeObjectForKey:path];
+	[path release];
+	
 	if( bufferId ) {
 		alDeleteBuffers(1, &bufferId);
 	}
@@ -30,13 +45,13 @@
 
 - (void*)getAudioDataWithURL:(NSURL *)url {
 	
-	void * data = NULL;
+	void *data = NULL;
 	
 	// Open the file
 	ExtAudioFileRef	file = NULL;
 	OSStatus error = ExtAudioFileOpenURL((CFURLRef)url, &file);
 	if( error ) {
-		NSLog(@"OpenALSource: ExtAudioFileOpenURL FAILED, Error = %ld", error);
+		NSLog(@"OpenALSource: ExtAudioFileOpenURL FAILED, Error = %d", (int)error);
 		goto Exit; 
 	}
 	
@@ -45,13 +60,14 @@
 	UInt32 propertySize = sizeof(inputFormat);
 	error = ExtAudioFileGetProperty(file, kExtAudioFileProperty_FileDataFormat, &propertySize, &inputFormat);
 	if( error ) {
-		NSLog(@"OpenALSource: ExtAudioFileGetProperty(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %ld", error);
+		NSLog(@"OpenALSource: ExtAudioFileGetProperty(kExtAudioFileProperty_FileDataFormat) FAILED, Error = %d", (int)error);
 		goto Exit;
 	}
 	if( inputFormat.mChannelsPerFrame > 2 ) { 
 		NSLog(@"OpenALSource: Unsupported Format, channel count is greater than stereo"); 
 		goto Exit;
 	}
+	
 
 	// Set the client format to 16 bit signed integer (native-endian) data
 	// Maintain the channel count and sample rate of the original source format
@@ -69,7 +85,7 @@
 	// Set the desired client (output) data format
 	error = ExtAudioFileSetProperty(file, kExtAudioFileProperty_ClientDataFormat, sizeof(outputFormat), &outputFormat);
 	if( error ) {
-		NSLog(@"OpenALSource: ExtAudioFileSetProperty(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %ld", error);
+		NSLog(@"OpenALSource: ExtAudioFileSetProperty(kExtAudioFileProperty_ClientDataFormat) FAILED, Error = %d", (int)error);
 		goto Exit; 
 	}
 	
@@ -78,12 +94,12 @@
 	propertySize = sizeof(frameCount);
 	error = ExtAudioFileGetProperty(file, kExtAudioFileProperty_FileLengthFrames, &propertySize, &frameCount);
 	if( error ) {
-		NSLog(@"OpenALSource: ExtAudioFileGetProperty(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %ld", error);
+		NSLog(@"OpenALSource: ExtAudioFileGetProperty(kExtAudioFileProperty_FileLengthFrames) FAILED, Error = %d", (int)error);
 		goto Exit; 
 	}
 	
 	// Read all the data into memory
-	int dataSize = frameCount * outputFormat.mBytesPerFrame;
+	UInt32 dataSize = (UInt32)frameCount * outputFormat.mBytesPerFrame;
 	data = malloc(dataSize);
 
 	AudioBufferList	bufferList;
@@ -99,12 +115,14 @@
 		size = (ALsizei)dataSize;
 		format = (outputFormat.mChannelsPerFrame > 1) ? AL_FORMAT_STEREO16 : AL_FORMAT_MONO16;
 		sampleRate = (ALsizei)outputFormat.mSampleRate;
+		
+		duration = (float)frameCount / sampleRate;
 	}
 	else { 
 		// failure
 		free(data);
 		data = NULL;
-		NSLog(@"OpenALSource: ExtAudioFileRead FAILED, Error = %ld", error);
+		NSLog(@"OpenALSource: ExtAudioFileRead FAILED, Error = %d", (int)error);
 		goto Exit;
 	}
 	

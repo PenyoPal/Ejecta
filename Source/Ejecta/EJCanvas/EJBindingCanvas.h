@@ -1,69 +1,41 @@
-#import <Foundation/Foundation.h>
 #import "EJBindingBase.h"
-#import "EJCanvasContextTexture.h"
-#import "EJCanvasContextScreen.h"
 #import "EJTexture.h"
 #import "EJDrawable.h"
+#import "EJCanvasContext.h"
+#import "EJBindingCanvasStyle.h"
 
-static const char * EJLineCapNames[] = {
-	[kEJLineCapButt] = "butt",
-	[kEJLineCapRound] = "round",
-	[kEJLineCapSquare] = "square"
-};
+#define EJ_CANVAS_DEFAULT_JPEG_QUALITY 0.9
+#define EJ_CANVAS_DATA_URL_PREFIX_JPEG "data:image/jpeg;base64,"
+#define EJ_CANVAS_DATA_URL_PREFIX_PNG "data:image/png;base64,"
 
-static const char * EJLineJoinNames[] = {
-	[kEJLineJoinMiter] = "miter",
-	[kEJLineJoinBevel] = "bevel",
-	[kEJLineJoinRound] = "round"
-};
+@class EJJavaScriptView;
 
-static const char * EJTextBaselineNames[] = {
-	[kEJTextBaselineAlphabetic] = "alphabetic",
-	[kEJTextBaselineMiddle] = "middle",
-	[kEJTextBaselineTop] = "top",
-	[kEJTextBaselineHanging] = "hanging",
-	[kEJTextBaselineBottom] = "bottom",
-	[kEJTextBaselineIdeographic] = "ideographic"
-};
-
-static const char * EJTextAlignNames[] = {
-	[kEJTextAlignStart] = "start",
-	[kEJTextAlignEnd] = "end",
-	[kEJTextAlignLeft] = "left",
-	[kEJTextAlignCenter] = "center",
-	[kEJTextAlignRight] = "right"
-};
-
-static const char * EJCompositeOperationNames[] = {
-	[kEJCompositeOperationSourceOver] = "source-over",
-	[kEJCompositeOperationLighter] = "lighter",
-	[kEJCompositeOperationDarker] = "darker",
-	[kEJCompositeOperationDestinationOut] = "destination-out",
-	[kEJCompositeOperationDestinationOver] = "destination-over",
-	[kEJCompositeOperationSourceAtop] = "source-atop",
-	[kEJCompositeOperationXOR] = "xor"
-};
-
-static const char * EJScalingModeNames[] = {
-	[kEJScalingModeNone] = "none",
-	[kEJScalingModeFitWidth] = "fit-width",
-	[kEJScalingModeFitHeight] = "fit-height"
-};
-
+typedef enum {
+	kEJCanvasContextModeInvalid,
+	kEJCanvasContextMode2D,
+	kEJCanvasContextModeWebGL
+} EJCanvasContextMode;
 
 @interface EJBindingCanvas : EJBindingBase <EJDrawable> {
-	EJCanvasContext * renderingContext;
-	EJApp * ejectaInstance;
+	JSObjectRef jsCanvasContext;
+	EJCanvasContext *renderingContext;
+	EJCanvasContextMode contextMode;
 	short width, height;
+	
+	EJBindingCanvasStyle *styleObject;
+	CGRect style;
 	
 	BOOL isScreenCanvas;
 	BOOL useRetinaResolution;
-	EJScalingMode scalingMode;
 	
 	BOOL msaaEnabled;
 	int msaaSamples;
 }
-	
-@property (readonly, nonatomic) EJTexture * texture;
+
+@property (nonatomic) float styleLeft;
+@property (nonatomic) float styleTop;
+@property (nonatomic) float styleWidth;
+@property (nonatomic) float styleHeight;
+@property (readonly, nonatomic) EJTexture *texture;
 
 @end
