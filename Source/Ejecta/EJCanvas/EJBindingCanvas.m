@@ -1,5 +1,4 @@
 #import "EJBindingCanvas.h"
-#import "EJBindingCanvasPattern.h"
 
 #import "EJCanvasContext2DScreen.h"
 #import "EJCanvasContext2DTexture.h"
@@ -10,7 +9,6 @@
 #import "EJBindingCanvasContextWebGL.h"
 
 #import "EJJavaScriptView.h"
-#import "EJClassLoader.h"
 #import "base64.h"
 
 
@@ -331,32 +329,6 @@ EJ_BIND_FUNCTION(getContext, ctx, argc, argv) {
 	JSValueRef ret = JSValueMakeString(ctx, jsDataURL);
 	JSStringRelease(jsDataURL);
 	return ret;
-}
-
-EJ_BIND_FUNCTION(createPattern, ctx, argc, argv) {
-	if (argc < 1) {	return NULL; }
-	NSObject * jsImage = JSObjectGetPrivate((JSObjectRef)argv[0]);
-	NSString *repetition = @"repeat";
-	if (argc >= 2) {
-		repetition = JSValueToNSString(ctx, argv[1]);
-	}
-
-	// Create the JS object
-	JSClassRef patternClass = [scriptView.classLoader getJSClass:[EJBindingCanvasPattern class]].jsClass;
-	JSObjectRef obj = JSObjectMake( ctx, patternClass, NULL );
-	JSValueProtect(ctx, obj);
-
-	// Create the native instance
-	EJBindingCanvasPattern * pat = [[EJBindingCanvasPattern alloc]
-									initWithContext:ctx
-									object:obj
-									imageData:jsImage
-									repetition:repetition];
-
-	// Attach the native instance to the js object
-	JSObjectSetPrivate( obj, (void *)pat );
-	JSValueUnprotect(ctx, obj);
-	return obj;
 }
 
 EJ_BIND_FUNCTION(toDataURL, ctx, argc, argv) {

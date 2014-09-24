@@ -114,8 +114,7 @@
 
 - (void)sourceDidFinishPlaying:(NSObject<EJAudioSource> *)source {
 	ended = true;
-	JSValueRef args[0] = {  };
-	[self triggerEvent:@"ended" argc:1 argv:args];
+    [self triggerEvent:@"ended"];
 }
 
 - (void)setPreload:(EJAudioPreload)preloadp {
