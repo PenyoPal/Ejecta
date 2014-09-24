@@ -84,22 +84,6 @@ console.timeEnd = function(name) {
 	delete consoleTimers[name];
 };
 
-
-// CommonJS style require()
-var loadedModules = {};
-window.require = function( name ) {
-	var id = name.replace(/\.js$/,'');
-	if( !loadedModules[id] ) {
-		var exports = {};
-		var module = { id: id, uri: id + '.js', exports: exports };
-		window.ejecta.requireModule( id, module, exports );
-		// Some modules override module.exports, so use the module.exports reference only after loading the module
-		loadedModules[id] = module.exports;
-	}
-
-	return loadedModules[id];
-};
-
 // Timers
 window.performance = {now: function() {return ej.performanceNow();} };
 window.setTimeout = function(cb, t){ return ej.setTimeout(cb, t||0); };
@@ -161,10 +145,11 @@ HTMLElement.prototype.appendChild = function( element ) {
 					type: 'load',
 					currentTarget: element
 				});
-			} else if( element._eventListeners.load ) {
-					var evt = {type: 'load', srcElement: element};
-					element._eventListeners.load(evt);
-					delete element._eventListeners.load;
+			}
+			if( element._eventListeners.load ) {
+				var evt = {type: 'load', srcElement: element};
+				element._eventListeners.load(evt);
+				delete element._eventListeners.load;
 			}
 		}, 1);
 	}
