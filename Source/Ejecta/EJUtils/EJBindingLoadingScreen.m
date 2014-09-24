@@ -7,12 +7,11 @@
 //
 
 #import "EJBindingLoadingScreen.h"
-#import "EJApp.h"
 
 @implementation EJBindingLoadingScreen
 
 EJ_BIND_FUNCTION(hide, ctx, argc, argv) {
-	[[EJApp instance] hideLoadingScreen];
+    //[scriptView hideLoadingScreen];
 	return NULL;
 }
 

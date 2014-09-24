@@ -1,28 +1,33 @@
 #import "EJBindingAdBanner.h"
-
+#import "EJJavaScriptView.h"
 
 @implementation EJBindingAdBanner
 
-- (id)initWithContext:(JSContextRef)ctx object:(JSObjectRef)obj argc:(size_t)argc argv:(const JSValueRef [])argv {
-	if( self = [super initWithContext:ctx object:obj argc:argc argv:argv] ) {
-		isAtBottom = NO;
-		wantsToShow = NO;
-		isReady = NO;
-		
-		banner = [[ADBannerView alloc] initWithFrame:CGRectZero];
-		banner.delegate = self;
-		banner.hidden = YES;
-		
-		banner.requiredContentSizeIdentifiers = [NSSet setWithObjects:
-			([[EJApp instance] landscapeMode]
-				? ADBannerContentSizeIdentifierLandscape
-				: ADBannerContentSizeIdentifierPortrait),
-			nil];
-		
-		[[EJApp instance].view addSubview:banner];
-		NSLog(@"AdBanner: init at y %f", banner.frame.origin.y);
-	}
-	return self;
+- (void)createWithJSObject:(JSObjectRef)obj scriptView:(EJJavaScriptView *)view {
+	[super createWithJSObject:obj scriptView:view];
+	
+	isAtBottom = NO;
+	wantsToShow = NO;
+	isReady = NO;
+	
+	banner = [[ADBannerView alloc] initWithFrame:CGRectZero];
+	banner.delegate = self;
+	banner.hidden = YES;
+	
+	BOOL landscape = [[[NSBundle mainBundle] infoDictionary][@"UIInterfaceOrientation"]
+		hasPrefix:@"UIInterfaceOrientationLandscape"];
+	
+	banner.requiredContentSizeIdentifiers = [NSSet setWithObjects:
+		(landscape
+			? ADBannerContentSizeIdentifierLandscape
+			: ADBannerContentSizeIdentifierPortrait),
+		nil];
+ 	if( landscape ) {
+ 		banner.currentContentSizeIdentifier = ADBannerContentSizeIdentifierLandscape;
+ 	}
+	
+	[scriptView addSubview:banner];
+	NSLog(@"AdBanner: init at y %f", banner.frame.origin.y);
 }
 
 - (void)dealloc {
@@ -35,18 +40,21 @@
 	NSLog(@"AdBanner: Ad loaded");
 	isReady = YES;
 	if( wantsToShow ) {
-		[[EJApp instance].view bringSubviewToFront:banner];
+		[scriptView bringSubviewToFront:banner];
 		banner.hidden = NO;
 	}
-	[self triggerEvent:@"load" argc:0 argv:NULL];
+	[self triggerEvent:@"load"];
 }
 
 - (void)bannerView:(ADBannerView *)theBanner didFailToReceiveAdWithError:(NSError *)error {
-	NSLog(@"AdBanner: Failed to receive Ad. Error: %d - %@", error.code, error.localizedDescription);
-	[self triggerEvent:@"error" argc:0 argv:NULL];
+	NSLog(@"AdBanner: Failed to receive Ad. Error: %ld - %@", (long)error.code, error.localizedDescription);
+	[self triggerEvent:@"error"];
 	banner.hidden = YES;
 }
 
+EJ_BIND_GET( isReady, ctx ) {
+	return JSValueMakeBoolean(ctx, isReady);
+}
 
 EJ_BIND_GET( isAtBottom, ctx ) {
 	return JSValueMakeBoolean(ctx, isAtBottom);
@@ -57,7 +65,7 @@ EJ_BIND_SET( isAtBottom, ctx, value ) {
 	
 	CGRect frame = banner.frame;
 	frame.origin.y = isAtBottom
-		? [EJApp instance].view.bounds.size.height - frame.size.height
+		? scriptView.bounds.size.height - frame.size.height
 		: 0;
 		
 	banner.frame = frame;
@@ -72,7 +80,7 @@ EJ_BIND_FUNCTION(hide, ctx, argc, argv ) {
 EJ_BIND_FUNCTION(show, ctx, argc, argv ) {
 	wantsToShow = YES;
 	if( isReady ) {
-		[[EJApp instance].view bringSubviewToFront:banner];
+		[scriptView bringSubviewToFront:banner];
 		banner.hidden = NO;
 	}
 	return NULL;

@@ -7,14 +7,15 @@
 //
 
 #import "EJBindingTextInput.h"
+#import "EJClassLoader.h"
 
 @implementation EJBindingTextInput
 
 @synthesize inputField;
 
-- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj argc:(size_t)argc argv:(const JSValueRef [])argv
+- (id)initWithContext:(JSContextRef)ctxp argc:(size_t)argc argv:(const JSValueRef [])argv
 {
-	if (self = [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
+	if (self = [super initWithContext:ctxp argc:argc argv:argv]) {
 		CGRect textFieldFrame = CGRectZero;
 		if (argc >= 4) {
 			NSInteger x = JSValueToNumberFast(ctxp, argv[0]);
@@ -39,7 +40,7 @@
 		}
 		inputField.hidden = YES;
 		inputField.delegate = self;
-		[[EJApp instance].view addSubview:inputField];
+		[scriptView addSubview:inputField];
 		enterCb = NULL;
 	}
 	return self;
@@ -48,7 +49,7 @@
 - (void)dealloc
 {
 	if (enterCb) {
-		JSValueUnprotect([EJApp instance].jsGlobalContext, enterCb);
+		JSValueUnprotect(scriptView.jsGlobalContext, enterCb);
 	}
 	[inputField release];
 	[super dealloc];
@@ -59,7 +60,7 @@
 	NSLog(@"Enter pressed");
 	if (enterCb) {
 		NSLog(@"Enter key pressed, invoking cb");
-		[[EJApp instance] invokeCallback:enterCb thisObject:NULL argc:0 argv:NULL];
+		[scriptView invokeCallback:enterCb thisObject:NULL argc:0 argv:NULL];
 	}
 	if (nextTextField) {
 		NSLog(@"Going to next text field instead %@", nextTextField);
@@ -134,7 +135,7 @@ EJ_BIND_SET(value, ctx, newValue) {
 
 EJ_BIND_GET(nextField, ctx) {
 	if (nextTextField) {
-		JSClassRef kls = [[EJApp instance] getJSClassForClass:[EJBindingTextInput class]];
+        JSClassRef kls = [scriptView.classLoader getJSClass:[EJBindingTextInput class]].jsClass;
 		JSObjectRef obj = JSObjectMake(ctx, kls, NULL);
 		JSObjectSetPrivate(obj, nextTextField);
 		return obj;

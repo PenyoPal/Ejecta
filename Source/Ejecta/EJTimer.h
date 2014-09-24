@@ -1,12 +1,16 @@
 #import <Foundation/Foundation.h>
-#import "EJApp.h"
+#import <JavaScriptCore/JavaScriptCore.h>
+
+@class EJJavaScriptView;
 
 @interface EJTimerCollection : NSObject {
-	NSMutableDictionary * timers;
+	NSMutableDictionary *timers;
 	int lastId;
+	EJJavaScriptView *scriptView;
 }
 
-- (int)scheduleCallback:(JSObjectRef)callback interval:(float)interval repeat:(BOOL)repeat;
+- (id)initWithScriptView:(EJJavaScriptView *)scriptView;
+- (int)scheduleCallback:(JSObjectRef)callback interval:(NSTimeInterval)interval repeat:(BOOL)repeat;
 - (void)cancelId:(int)timerId;
 - (void)update;
 
@@ -14,13 +18,16 @@
 
 
 @interface EJTimer : NSObject {
-	NSTimeInterval target;
-	float interval;
+	NSTimeInterval interval;
 	JSObjectRef callback;
 	BOOL active, repeat;
+	EJJavaScriptView *scriptView;
 }
 
-- (id)initWithCallback:(JSObjectRef)callbackp interval:(float)intervalp repeat:(BOOL)repeatp;
+- (id)initWithScriptView:(EJJavaScriptView *)scriptViewp
+	callback:(JSObjectRef)callbackp
+	interval:(NSTimeInterval)intervalp
+	repeat:(BOOL)repeatp;
 - (void)check;
 
 @property (readonly) BOOL active;

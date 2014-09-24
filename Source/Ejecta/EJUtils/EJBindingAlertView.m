@@ -20,7 +20,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
-	JSContextRef ctx = [[EJApp instance] jsGlobalContext];
+	JSContextRef ctx = [scriptView jsGlobalContext];
 	NSString *btn;
 	switch (buttonIndex) {
 		case 0:

@@ -1,11 +1,18 @@
 #import "EJBindingBase.h"
 #import <GameKit/GameKit.h>
 
-static NSString * kEJBindingGameCenterAutoAuth = @"EJBindingGameCenter.AutoAuth";
+enum {
+	kEJGameCenterAutoAuthNeverTried = 0,
+	kEJGameCenterAutoAuthFailed = 1,
+	kEJGameCenterAutoAuthSucceeded = 2
+};
+
+static NSString *kEJGameCenterAutoAuth = @"EJGameCenter.AutoAuth";
 
 @interface EJBindingGameCenter : EJBindingBase <GKLeaderboardViewControllerDelegate,GKAchievementViewControllerDelegate> {
 	BOOL authed;
-	NSMutableDictionary * achievements;
+	BOOL viewIsActive;
+	NSMutableDictionary *achievements;
 }
 
 - (void)loadAchievements;

@@ -85,7 +85,7 @@ struct pixel blend3(struct pixel left, struct pixel main, struct pixel right, fl
 		 saturation:(float)sat
 		  lightness:(float)light
 {
-	GLubyte *pixels = data.pixels;
+	GLubyte *pixels = data.pixels.mutableBytes;
 	struct pixel colour = blend2((struct pixel){128, 128, 128}, hsv2rgb(hue, 1, 0.5), sat);
 	struct pixel black = { 0, 0, 0 },
 				 white = { 255, 255, 255};

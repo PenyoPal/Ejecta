@@ -14,7 +14,7 @@
 
 - (void)filterImage:(EJImageData *)data
 {
-	GLubyte *pixels = data.pixels;
+	GLubyte *pixels = data.pixels.mutableBytes;
 	int nBytes = data.height * data.width * 4;
 	for (int i = 0; i < nBytes; i += 4) {
 		int v = (int)(0.2126 * (float)pixels[i] + 0.7152 * (float)pixels[i+1] + 0.0722 * (float)pixels[i+2]);

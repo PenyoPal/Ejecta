@@ -5,13 +5,13 @@
 
 @implementation EJBindingLocalStorage
 
-- (id)initWithContext:(JSContextRef)ctxp object:(JSObjectRef)obj argc:(size_t)argc argv:(const JSValueRef [])argv
+- (id)initWithContext:(JSContextRef)ctxp argc:(size_t)argc argv:(const JSValueRef [])argv
 {
-    if (self = [super initWithContext:ctxp object:obj argc:argc argv:argv]) {
+    if (self = [super initWithContext:ctxp argc:argc argv:argv]) {
         NSArray *documentDirs = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         NSString *documentDir = [documentDirs objectAtIndex:0];
         NSString *path = [documentDir stringByAppendingPathComponent:STORAGE_FILE];
-        
+
         storeUrl = [NSURL fileURLWithPath:path];
         NSManagedObjectModel *model = [NSManagedObjectModel mergedModelFromBundles:nil];
         psc = [[NSPersistentStoreCoordinator alloc]
@@ -129,7 +129,7 @@
 
 EJ_BIND_FUNCTION(getItem, ctx, argc, argv ) {
 	if( argc < 1 ) return NULL;
-	
+
 	NSString * key = JSValueToNSString( ctx, argv[0] );
 	NSArray * vals = [self getFromLocalStorage:key];
     NSString * value = nil;
@@ -140,30 +140,47 @@ EJ_BIND_FUNCTION(getItem, ctx, argc, argv ) {
 	return value ? NSStringToJSValue( ctx, value ) : NULL;
 }
 
-EJ_BIND_FUNCTION(setItem, ctx, argc, argv ) {
-	if( argc < 2 ) return NULL;
-	
-	NSString * key = JSValueToNSString( ctx, argv[0] );
-	NSString * value = JSValueToNSString( ctx, argv[1] );
-	
+EJ_BIND_FUNCTION(setItem, ctx, argc, argv) {
+	if( argc < 2 ) { return NULL; }
+
+	NSString *key = JSValueToNSString( ctx, argv[0] );
+	NSString *value = JSValueToNSString( ctx, argv[1] );
+
 	if( !key || !value ) return NULL;
 	[self setInLocalStorage:value forKey:key];
-	
+
 	return NULL;
 }
 
-EJ_BIND_FUNCTION(removeItem, ctx, argc, argv ) {
-	if( argc < 1 ) return NULL;
-	
+EJ_BIND_FUNCTION(removeItem, ctx, argc, argv) {
+	if( argc < 1 ) { return NULL; }
+
 	NSString * key = JSValueToNSString( ctx, argv[0] );
 	[self removeFromLocalStorage:key];
-	
+
 	return NULL;
 }
 
 EJ_BIND_FUNCTION(clear, ctx, argc, argv ) {
 	[self clearLocalStorage];
 	return NULL;
+}
+
+EJ_BIND_FUNCTION(key, ctx, argc, argv) {
+	if( argc < 1 ) { return NULL; }
+
+	int index = JSValueToNumberFast(ctx, argv[0]);
+
+	// TODO: cache this maybe?
+	NSDictionary *keys = [NSUserDefaults.standardUserDefaults persistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
+	NSString *key = keys.allKeys[index];
+	return key ? NSStringToJSValue(ctx, key) : NULL;
+}
+
+EJ_BIND_GET(length, ctx) {
+	// TODO: cache this maybe?
+	NSDictionary *keys = [NSUserDefaults.standardUserDefaults persistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
+	return JSValueMakeNumber(ctx, keys.count);
 }
 
 
