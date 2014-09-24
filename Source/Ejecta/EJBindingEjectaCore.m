@@ -68,6 +68,13 @@ EJ_BIND_FUNCTION(load, ctx, argc, argv ) {
 	return NULL;
 }
 
+EJ_BIND_FUNCTION(require, ctx, argc, argv ) {
+    if( argc < 1 ) { return NULL; }
+
+    [scriptView loadScriptAtPath:JSValueToNSString(ctx, argv[0])];
+    return NULL;
+}
+
 EJ_BIND_FUNCTION(include, ctx, argc, argv ) {
 	if( argc < 1 ) { return NULL; }
 
