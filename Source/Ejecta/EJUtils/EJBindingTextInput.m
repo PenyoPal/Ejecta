@@ -40,7 +40,7 @@
 		}
 		inputField.hidden = YES;
 		inputField.delegate = self;
-		[scriptView addSubview:inputField];
+        // scriptView isn't around yet, or something, so wait until we try to show the view to add it
 		enterCb = NULL;
 	}
 	return self;
@@ -48,6 +48,7 @@
 
 - (void)dealloc
 {
+    [inputField removeFromSuperview];
 	if (enterCb) {
 		JSValueUnprotect(scriptView.jsGlobalContext, enterCb);
 	}
@@ -121,6 +122,9 @@ EJ_BIND_SET(onEnter, ctx, newEnterCb) {
 }
 
 EJ_BIND_FUNCTION(show, ctx, argc, argv) {
+    if (!inputField.superview) {
+        [scriptView addSubview:inputField];
+    }
 	inputField.hidden = NO;
 	return NULL;
 }
