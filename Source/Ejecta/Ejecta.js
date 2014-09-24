@@ -161,6 +161,7 @@ HTMLElement.prototype.addEventListener = function( event, handler, capture ) {
 
 HTMLElement.prototype.removeEventListener = function( event, handler, capture ) {
 	delete this._eventListeners[event];
+};
 
 HTMLElement.prototype.insertBefore = function( newElement, existingElement ) {
 	// Just append; we don't care about order here
@@ -187,7 +188,6 @@ HTMLElement.prototype.getAttribute = function(attr){
 	return this[attr];
 };
 
-};
 
 // The document object
 window.document = {
