@@ -47,19 +47,19 @@
 	<string>MainWindow</string>
 	<key>NSMainNibFile~ipad</key>
 	<string>MainWindow</string>
-	<key>UIInterfaceOrientation</key>
-	<string>UIInterfaceOrientationLandscapeLeft</string>
-	<key>UIStatusBarHidden</key>
-	<true/>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
-	<key>UISupportedInterfaceOrientations</key>
-	<array/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>goodgirl.ttf</string>
 	</array>
+	<key>UIInterfaceOrientation</key>
+	<string>UIInterfaceOrientationLandscapeLeft</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array/>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>
