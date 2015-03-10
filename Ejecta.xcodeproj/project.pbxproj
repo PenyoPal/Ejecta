@@ -171,7 +171,7 @@
 		1AE8A9F519D25ACB00861035 /* EJBindingLoadingScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingLoadingScreen.m; sourceTree = "<group>"; };
 		1AE8A9F919D25ACB00861035 /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		1D6058910D05DD3D006BFB54 /* VivaVocab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VivaVocab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1D6058910D05DD3D006BFB54 /* Viva Vocab!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Viva Vocab!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765FC0DF74451002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		33BE9DE0186817D900E0D16E /* EJBindingImagePicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingImagePicker.h; sourceTree = "<group>"; };
@@ -395,7 +395,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1D6058910D05DD3D006BFB54 /* VivaVocab.app */,
+				1D6058910D05DD3D006BFB54 /* Viva Vocab!.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -761,7 +761,7 @@
 			);
 			name = Ejecta;
 			productName = iOSImpact;
-			productReference = 1D6058910D05DD3D006BFB54 /* VivaVocab.app */;
+			productReference = 1D6058910D05DD3D006BFB54 /* Viva Vocab!.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -773,7 +773,7 @@
 				LastUpgradeCheck = 0600;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
-						DevelopmentTeam = NF44E7L43L;
+						DevelopmentTeam = AE4H66FUMK;
 					};
 				};
 			};
@@ -961,7 +961,7 @@
 					"$(PROJECT_DIR)/Source/lib",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
-				PRODUCT_NAME = VivaVocab;
+				PRODUCT_NAME = "Viva Vocab!";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -988,7 +988,7 @@
 					"\"$(SRCROOT)/Source/lib\"",
 					"$(PROJECT_DIR)/Source/lib",
 				);
-				PRODUCT_NAME = VivaVocab;
+				PRODUCT_NAME = "Viva Vocab!";
 				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
@@ -1009,11 +1009,12 @@
 					"${SOURCE_ROOT}/Source/lib",
 				);
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DDEBUG";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Debug;
@@ -1031,11 +1032,12 @@
 					"${SOURCE_ROOT}/Source/lib",
 				);
 				INFOPLIST_FILE = "";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PROVISIONING_PROFILE = "396D9BD8-111E-4C87-B75D-7DAD856B0322";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "396D9BD8-111E-4C87-B75D-7DAD856B0322";
 				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALID_ARCHS = "armv7 armv7s arm64";
 			};
 			name = Release;
