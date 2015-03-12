@@ -99,6 +99,11 @@ EJ_BIND_FUNCTION(dismissKeyboard, ctx, argc, argv) {
 	return NULL;
 }
 
+EJ_BIND_FUNCTION(focus, ctx, argc, argv) {
+    [inputField becomeFirstResponder];
+    return NULL;
+}
+
 EJ_BIND_FUNCTION(hide, ctx, argc, argv) {
 	inputField.hidden = YES;
 	return NULL;
