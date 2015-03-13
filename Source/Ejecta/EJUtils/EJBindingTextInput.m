@@ -25,7 +25,7 @@
 			textFieldFrame = CGRectMake(x, y, width, height);
 		}
 		inputField = [[UITextField alloc] initWithFrame:textFieldFrame];
-		inputField.borderStyle = UITextBorderStyleRoundedRect;
+        inputField.borderStyle = UITextBorderStyleNone;
 		if (argc >= 5) {
 			NSString *type = JSValueToNSString(ctxp, argv[4]);
 			if ([type isEqualToString:@"password"]) {
@@ -115,6 +115,60 @@ EJ_BIND_GET(hidden, ctx) {
 
 EJ_BIND_GET(onEnter, ctx) {
 	return enterCb;
+}
+
+EJ_BIND_GET(fontColour, ctx) {
+    CGFloat r, g, b, a;
+    [[inputField textColor] getRed:&r green:&g blue:&b alpha:&a];
+    return NSStringToJSValue(ctx, [NSString stringWithFormat:@"rgba(%f, %f, %f, %f)", r*255, g*255, b*255, a]);
+}
+
+EJ_BIND_SET(fontColour, ctx, rgbaString) {
+    NSString *colourStr = JSValueToNSString(ctx, rgbaString);
+    NSError *err;
+    NSRegularExpression *regex =
+    [NSRegularExpression
+     regularExpressionWithPattern:@"^rgba\\(\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*((?:\\d|\\.)+)\\)$"
+     options:NSRegularExpressionCaseInsensitive
+     error:&err];
+    NSTextCheckingResult *result = [regex firstMatchInString:colourStr options:NSMatchingAnchored range:NSMakeRange(0, [colourStr length])];
+    if (NSEqualRanges([result range], NSMakeRange(NSNotFound, 0))) {
+        NSLog(@"String %@ didn't match regex", colourStr);
+    } else {
+        CGFloat r = [[colourStr substringWithRange:[result rangeAtIndex:1]] floatValue] / 255,
+                g = [[colourStr substringWithRange:[result rangeAtIndex:2]] floatValue] / 255,
+                b = [[colourStr substringWithRange:[result rangeAtIndex:3]] floatValue] / 255,
+                a = [[colourStr substringWithRange:[result rangeAtIndex:4]] floatValue];
+        UIColor *newColour = [UIColor colorWithRed:r green:g blue:b alpha:a];
+        [inputField setTextColor:newColour];
+    }
+}
+
+EJ_BIND_GET(backgroundColour, ctx) {
+    CGFloat r, g, b, a;
+    [[inputField backgroundColor] getRed:&r green:&g blue:&b alpha:&a];
+    return NSStringToJSValue(ctx, [NSString stringWithFormat:@"rgba(%f, %f, %f, %f)", r*255, g*255, b*255, a]);
+}
+
+EJ_BIND_SET(backgroundColour, ctx, rgbaString) {
+    NSString *colourStr = JSValueToNSString(ctx, rgbaString);
+    NSError *err;
+    NSRegularExpression *regex =
+    [NSRegularExpression
+     regularExpressionWithPattern:@"^rgba\\(\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*((?:\\d|\\.)+)\\)$"
+     options:NSRegularExpressionCaseInsensitive
+     error:&err];
+    NSTextCheckingResult *result = [regex firstMatchInString:colourStr options:NSMatchingAnchored range:NSMakeRange(0, [colourStr length])];
+    if (NSEqualRanges([result range], NSMakeRange(NSNotFound, 0))) {
+        NSLog(@"String %@ didn't match regex", colourStr);
+    } else {
+        CGFloat r = [[colourStr substringWithRange:[result rangeAtIndex:1]] floatValue] / 255,
+        g = [[colourStr substringWithRange:[result rangeAtIndex:2]] floatValue] / 255,
+        b = [[colourStr substringWithRange:[result rangeAtIndex:3]] floatValue] / 255,
+        a = [[colourStr substringWithRange:[result rangeAtIndex:4]] floatValue];
+        UIColor *newColour = [UIColor colorWithRed:r green:g blue:b alpha:a];
+        [inputField setBackgroundColor:newColour];
+    }
 }
 
 EJ_BIND_SET(onEnter, ctx, newEnterCb) {
