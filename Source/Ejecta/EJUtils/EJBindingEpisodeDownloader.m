@@ -204,8 +204,9 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
             }
             [_episodeImages release];
             [_episodeContent release];
-            // TODO: destroy queue & group?
         }
+        dispatch_release(group);
+        dispatch_release(queue);
     });
     return NULL;
 }
