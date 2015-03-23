@@ -12,6 +12,7 @@
 @interface EJBindingEpisodeDownloader ()
 {
     BOOL _downloadImages;
+    NSInteger _assetSize;
     NSData *_episodeContent;
     NSData *_episodeImages;
 }
@@ -28,6 +29,7 @@
     if (self =  [super initWithContext:ctxp argc:argc argv:argv]) {
 		errorCb = successCb = NULL;
         _downloadImages = NO;
+        _assetSize = 0;
     }
     return self;
 }
@@ -165,7 +167,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
 
     if (_downloadImages) {
         NSString *episodeFileName = [remoteUrl lastPathComponent];
-        NSURL *imagesUrl = [[NSURL URLWithString:[NSString stringWithFormat:@"../images/%@", episodeFileName]
+        NSURL *imagesUrl = [[NSURL URLWithString:[NSString stringWithFormat:@"../images/%d/%@", _assetSize, episodeFileName]
                                   relativeToURL:remoteUrl] absoluteURL];
         NSURLRequest *imagesReq = [NSURLRequest requestWithURL:imagesUrl
                                                    cachePolicy:NSURLRequestUseProtocolCachePolicy
@@ -202,8 +204,9 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
             }
             [_episodeImages release];
             [_episodeContent release];
-            // TODO: destroy queue & group?
         }
+        dispatch_release(group);
+        dispatch_release(queue);
     });
     return NULL;
 }
@@ -212,6 +215,12 @@ EJ_BIND_GET(getImages, ctx) { return JSValueMakeBoolean(ctx, _downloadImages); }
 
 EJ_BIND_SET(getImages, ctx, value) {
     _downloadImages = JSValueToBoolean(ctx, value);
+}
+
+EJ_BIND_GET(assetSize, ctx) { return JSValueMakeNumber(ctx, _assetSize); }
+
+EJ_BIND_SET(assetSize, ctx, value) {
+    _assetSize = JSValueToNumberFast(ctx, value);
 }
 
 @end
