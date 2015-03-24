@@ -13,9 +13,27 @@
 	// not being interacted with by touch. ie. games with motion control.
 	application.idleTimerDisabled = NO;
 	
-	[self loadViewControllerWithScriptAtPath:@"index.js"];
-	
+    if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]) {
+        NSLog(@"Launched with url");
+        [self handleOpenUrl:[launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]];
+    }
+
+    [self loadViewControllerWithScriptAtPath:@"index.js"];
+    
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+    NSLog(@"Open from url while running, from %@", sourceApplication);
+    [self handleOpenUrl:url];
+    return YES;
+}
+
+- (void)handleOpenUrl:(NSURL *)url
+{
+    NSLog(@"Handling url %@", url);
+    // TODO
 }
 
 - (void)loadViewControllerWithScriptAtPath:(NSString *)path {
