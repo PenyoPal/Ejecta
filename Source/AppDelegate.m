@@ -15,7 +15,9 @@
 	
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]) {
         NSLog(@"Launched with url");
-        [self handleOpenUrl:[launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]];
+        // Url handler isn't ready yet, so store this away for later.
+        [[NSUserDefaults standardUserDefaults] setURL:[launchOptions objectForKey:UIApplicationLaunchOptionsURLKey]
+                                               forKey:@"_migrateUrl"];
     }
 
     [self loadViewControllerWithScriptAtPath:@"index.js"];
@@ -26,14 +28,8 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
     NSLog(@"Open from url while running, from %@", sourceApplication);
-    [self handleOpenUrl:url];
-    return YES;
-}
-
-- (void)handleOpenUrl:(NSURL *)url
-{
-    NSLog(@"Handling url %@", url);
     [[NSNotificationCenter defaultCenter] postNotificationName:@"recievedMigrateUrl" object:url];
+    return YES;
 }
 
 - (void)loadViewControllerWithScriptAtPath:(NSString *)path {
