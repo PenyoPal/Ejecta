@@ -33,7 +33,7 @@
 - (void)handleOpenUrl:(NSURL *)url
 {
     NSLog(@"Handling url %@", url);
-    // TODO
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"recievedMigrateUrl" object:url];
 }
 
 - (void)loadViewControllerWithScriptAtPath:(NSString *)path {

@@ -25,6 +25,8 @@
 		1AE8A9FF19D25ACB00861035 /* EJBindingInAppPurchase.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9F319D25ACB00861035 /* EJBindingInAppPurchase.m */; };
 		1AE8AA0019D25ACB00861035 /* EJBindingLoadingScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9F519D25ACB00861035 /* EJBindingLoadingScreen.m */; };
 		1AE8AA0219D25ACB00861035 /* EJLocalStored.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9F819D25ACB00861035 /* EJLocalStored.xcdatamodeld */; };
+		1AEC153F1ACA2F0F000A946D /* EJBindingHmac.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC153E1ACA2F0F000A946D /* EJBindingHmac.m */; };
+		1AEC15421ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AEC15411ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
@@ -170,6 +172,10 @@
 		1AE8A9F419D25ACB00861035 /* EJBindingLoadingScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingLoadingScreen.h; sourceTree = "<group>"; };
 		1AE8A9F519D25ACB00861035 /* EJBindingLoadingScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingLoadingScreen.m; sourceTree = "<group>"; };
 		1AE8A9F919D25ACB00861035 /* EJLocalStored.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJLocalStored.xcdatamodel; sourceTree = "<group>"; };
+		1AEC153D1ACA2F0F000A946D /* EJBindingHmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingHmac.h; sourceTree = "<group>"; };
+		1AEC153E1ACA2F0F000A946D /* EJBindingHmac.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingHmac.m; sourceTree = "<group>"; };
+		1AEC15401ACDB1F3000A946D /* EJBindingOpenedUrlHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingOpenedUrlHandler.h; sourceTree = "<group>"; };
+		1AEC15411ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingOpenedUrlHandler.m; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D6058910D05DD3D006BFB54 /* Viva Vocab!.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Viva Vocab!.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -628,6 +634,10 @@
 				B63D256C16E8DFAB007E6034 /* EJBindingWebSocket.m */,
 				B6D4B27F183CDFBB008251EB /* EJBindingGeolocation.h */,
 				B6D4B280183CDFBB008251EB /* EJBindingGeolocation.m */,
+				1AEC153D1ACA2F0F000A946D /* EJBindingHmac.h */,
+				1AEC153E1ACA2F0F000A946D /* EJBindingHmac.m */,
+				1AEC15401ACDB1F3000A946D /* EJBindingOpenedUrlHandler.h */,
+				1AEC15411ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m */,
 			);
 			path = EJUtils;
 			sourceTree = "<group>";
@@ -912,12 +922,14 @@
 				B630048C16CB098D0036D8D4 /* EJClassLoader.m in Sources */,
 				1AE8A9FF19D25ACB00861035 /* EJBindingInAppPurchase.m in Sources */,
 				B699669816CC4E6E006B9456 /* EJTextureStorage.m in Sources */,
+				1AEC15421ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m in Sources */,
 				B699669B16CC55F5006B9456 /* EJSharedTextureCache.m in Sources */,
 				B699669E16CC579E006B9456 /* EJSharedOpenGLContext.m in Sources */,
 				1A8C24D019D2615C0029CD7E /* unzip.c in Sources */,
 				B6E02BC016D4110D00616925 /* EJNonRetainingProxy.m in Sources */,
 				1AE8A9FE19D25ACB00861035 /* EJBindingGrayscaleFilter.m in Sources */,
 				B63D256616E8DE23007E6034 /* SRWebSocket.m in Sources */,
+				1AEC153F1ACA2F0F000A946D /* EJBindingHmac.m in Sources */,
 				B63D256D16E8E0EE007E6034 /* EJBindingWebSocket.m in Sources */,
 				B6F629D116F353C800F16BAC /* EJBindingCanvasStyle.m in Sources */,
 				B60EA4021910655C00FA45E7 /* base64.c in Sources */,
