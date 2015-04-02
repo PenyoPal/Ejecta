@@ -28,7 +28,9 @@
 			break;
 		case 1:
 			btn = @"okay";
-			[[UIApplication sharedApplication] openURL:okUrl];
+            if (okUrl) {
+                [[UIApplication sharedApplication] openURL:okUrl];
+            }
 			break;
 		default:
 			break;
@@ -46,15 +48,22 @@ EJ_BIND_FUNCTION(createPopup, ctx, argc, argv) {
 	JSObjectRef args = (JSObjectRef)argv[0];
 	NSString *title = JSValueToNSString(ctx, JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("title"), NULL));
 	NSString *message = JSValueToNSString(ctx, JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("message"), NULL));
-	NSString *okTitle = JSValueToNSString(ctx, JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("okTitle"), NULL));
-	okUrl = [[NSURL URLWithString:JSValueToNSString(ctx, JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("okUrl"), NULL))] retain];
 	NSString *cancelTitle = JSValueToNSString(ctx, JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("cancelTitle"), NULL));
 	alertView = [[UIAlertView alloc] initWithTitle:title
 										   message:message
 										  delegate:self
 								 cancelButtonTitle:cancelTitle
-								 otherButtonTitles:okTitle, nil];
-	[alertView show];
+								 otherButtonTitles:nil];
+    JSValueRef jsOk = JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("okTitle"), NULL);
+    if (!JSValueIsUndefined(ctx, jsOk)) {
+        NSString *okTitle = JSValueToNSString(ctx, jsOk);
+        [alertView addButtonWithTitle:okTitle];
+        JSValueRef jsOkUrl = JSObjectGetProperty(ctx, args, JSStringCreateWithUTF8CString("okUrl"), NULL);
+        if (!JSValueIsUndefined(ctx, jsOkUrl)) {
+            okUrl = [[NSURL URLWithString:JSValueToNSString(ctx, jsOkUrl)] retain];
+        }
+    }
+    [alertView show];
 	return NULL;
 }
 
