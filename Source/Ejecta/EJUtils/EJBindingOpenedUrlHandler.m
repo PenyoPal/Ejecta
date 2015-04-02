@@ -30,15 +30,38 @@
 {
     NSLog(@"Got notification in binding");
     NSURL *url = notification.object;
-    JSValueRef args[] = { NSStringToJSValue(scriptView.jsGlobalContext, [url absoluteString]) };
+    [self sendRecievedUrlEvent:url];
+}
+
+- (void)sendRecievedUrlEvent:(NSURL *)url
+{
+    JSContextRef ctx = scriptView.jsGlobalContext;
+    JSObjectRef urlObj = JSObjectMake(ctx, NULL, NULL);
+    JSObjectSetProperty(ctx, urlObj, JSStringCreateWithUTF8CString("url"),
+                        NSStringToJSValue(ctx, [url absoluteString]), kJSPropertyAttributeNone, NULL);
+    JSObjectSetProperty(ctx, urlObj, JSStringCreateWithUTF8CString("path"),
+                        NSStringToJSValue(ctx, [url path]), kJSPropertyAttributeNone, NULL);
+    NSArray *queryParams = [[url query] componentsSeparatedByString:@"&"];
+    JSObjectRef paramsObj = JSObjectMake(ctx, NULL, NULL);
+    [queryParams enumerateObjectsUsingBlock:^(NSString *param, NSUInteger idx, BOOL* stop) {
+        NSArray *keyValue = [param componentsSeparatedByString:@"="];
+        assert([keyValue count] == 2);
+        NSString *key = keyValue[0], *value = keyValue[1];
+        JSObjectSetProperty(ctx, paramsObj, JSStringCreateWithCFString((CFStringRef)key),
+                            NSStringToJSValue(ctx, value), kJSPropertyAttributeNone, NULL);
+
+    }];
+    JSObjectSetProperty(ctx, urlObj, JSStringCreateWithUTF8CString("params"), paramsObj,
+                        kJSPropertyAttributeNone, NULL);
+    JSValueRef args[] = { urlObj };
     [self triggerEvent:@"RecievedUrl" argc:1 argv:args];
 }
+
 
 EJ_BIND_FUNCTION(flush, ctx, argc, argv) {
     NSURL *stored = [[NSUserDefaults standardUserDefaults] URLForKey:@"_migrateUrl"];
     if (stored) {
-        JSValueRef args[] = { NSStringToJSValue(ctx, [stored absoluteString]) };
-        [self triggerEvent:@"RecievedUrl" argc:1 argv:args];
+        [self sendRecievedUrlEvent:stored];
         [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"_migrateUrl"];
     }
     return NULL;
