@@ -102,7 +102,8 @@
 				break;
 			case SKPaymentTransactionStateRestored:
 				NSLog(@"Transaction restored");
-				[self triggerEvent:@"RestoredPurchase" argc:0 argv:NULL];
+                JSValueRef params[] = { NSStringToJSValue(scriptView.jsGlobalContext, transaction.payment.productIdentifier) };
+				[self triggerEvent:@"RestoredPurchase" argc:1 argv:params];
 				break;
 			default:
 				break;
