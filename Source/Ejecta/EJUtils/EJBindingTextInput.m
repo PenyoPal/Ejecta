@@ -80,6 +80,13 @@ replacementString:(NSString *)string
 	return YES;
 }
 
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    [self triggerEvent:@"blur" argc:0 argv:NULL];
+    return YES;
+}
+
+
 EJ_BIND_FUNCTION(setFrame, ctx, argc, argv) {
 	if (argc < 4) { return NULL; }
 	NSInteger x = JSValueToNumberFast(ctx, argv[0]);
@@ -211,5 +218,6 @@ EJ_BIND_SET(nextField, ctx, nextTextInput) {
 }
 
 EJ_BIND_EVENT(keyup);
+EJ_BIND_EVENT(blur);
 
 @end
