@@ -217,6 +217,15 @@ EJ_BIND_SET(nextField, ctx, nextTextInput) {
 	nextTextField = (EJBindingTextInput *)JSObjectGetPrivate((JSObjectRef)nextTextInput);
 }
 
+EJ_BIND_GET(fontSize, ctx) {
+    return JSValueMakeNumber(ctx, [[inputField font] pointSize]);
+}
+
+EJ_BIND_SET(fontSize, ctx, newSize) {
+    [inputField setFont:[[inputField font] fontWithSize:JSValueToNumberFast(ctx, newSize)]];
+    return;
+}
+
 EJ_BIND_EVENT(keyup);
 EJ_BIND_EVENT(blur);
 
