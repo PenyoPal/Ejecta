@@ -167,7 +167,7 @@ EJ_BIND_FUNCTION(downloadEpisodeResources, ctx, argc, argv) {
 
     if (_downloadImages) {
         NSString *episodeFileName = [remoteUrl lastPathComponent];
-        NSURL *imagesUrl = [[NSURL URLWithString:[NSString stringWithFormat:@"../images/%d/%@", _assetSize, episodeFileName]
+        NSURL *imagesUrl = [[NSURL URLWithString:[NSString stringWithFormat:@"../images/%ld/%@",(long)_assetSize, episodeFileName]
                                   relativeToURL:remoteUrl] absoluteURL];
         NSURLRequest *imagesReq = [NSURLRequest requestWithURL:imagesUrl
                                                    cachePolicy:NSURLRequestUseProtocolCachePolicy

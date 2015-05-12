@@ -17,6 +17,7 @@
 		1A8C24D419D262350029CD7E /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8C24D319D262350029CD7E /* CoreData.framework */; };
 		1A8C24D619D262CA0029CD7E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8C24D519D262CA0029CD7E /* libz.dylib */; };
 		1A8C24D819D262DD0029CD7E /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A8C24D719D262DD0029CD7E /* libz.1.2.5.dylib */; };
+		1A8F60531AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A8F60521AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.m */; };
 		1AE8A9FA19D25ACB00861035 /* EJBindingAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9E919D25ACB00861035 /* EJBindingAlertView.m */; };
 		1AE8A9FB19D25ACB00861035 /* EJBindingColourizeFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9EB19D25ACB00861035 /* EJBindingColourizeFilter.m */; };
 		1AE8A9FC19D25ACB00861035 /* EJBindingDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 1AE8A9ED19D25ACB00861035 /* EJBindingDeviceInfo.m */; };
@@ -157,6 +158,9 @@
 		1A8C24D319D262350029CD7E /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1A8C24D519D262CA0029CD7E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		1A8C24D719D262DD0029CD7E /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		1A8F60511AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingEpisodeCardsDownloader.h; sourceTree = "<group>"; };
+		1A8F60521AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingEpisodeCardsDownloader.m; sourceTree = "<group>"; };
+		1AC107F01AD3003A00A7A440 /* Viva Vocab!.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Viva Vocab!.entitlements"; sourceTree = "<group>"; };
 		1AE8A9E819D25ACB00861035 /* EJBindingAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingAlertView.h; sourceTree = "<group>"; };
 		1AE8A9E919D25ACB00861035 /* EJBindingAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EJBindingAlertView.m; sourceTree = "<group>"; };
 		1AE8A9EA19D25ACB00861035 /* EJBindingColourizeFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EJBindingColourizeFilter.h; sourceTree = "<group>"; };
@@ -435,6 +439,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				1AC107F01AD3003A00A7A440 /* Viva Vocab!.entitlements */,
 				B68C5AEF132E6CD60015092E /* App */,
 				B64CE60E166682700087CF94 /* Source */,
 				B64CE683166682B10087CF94 /* Resources */,
@@ -638,6 +643,8 @@
 				1AEC153E1ACA2F0F000A946D /* EJBindingHmac.m */,
 				1AEC15401ACDB1F3000A946D /* EJBindingOpenedUrlHandler.h */,
 				1AEC15411ACDB1F3000A946D /* EJBindingOpenedUrlHandler.m */,
+				1A8F60511AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.h */,
+				1A8F60521AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.m */,
 			);
 			path = EJUtils;
 			sourceTree = "<group>";
@@ -783,7 +790,12 @@
 				LastUpgradeCheck = 0600;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
-						DevelopmentTeam = AE4H66FUMK;
+						DevelopmentTeam = NF44E7L43L;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -931,6 +943,7 @@
 				B63D256616E8DE23007E6034 /* SRWebSocket.m in Sources */,
 				1AEC153F1ACA2F0F000A946D /* EJBindingHmac.m in Sources */,
 				B63D256D16E8E0EE007E6034 /* EJBindingWebSocket.m in Sources */,
+				1A8F60531AFD2DDD00F12E17 /* EJBindingEpisodeCardsDownloader.m in Sources */,
 				B6F629D116F353C800F16BAC /* EJBindingCanvasStyle.m in Sources */,
 				B60EA4021910655C00FA45E7 /* base64.c in Sources */,
 				B870BDE916F2E11A00827F01 /* EJBindingWebGLExtensions.m in Sources */,
@@ -952,6 +965,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Viva Vocab!.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -983,6 +997,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_ENTITLEMENTS = "Viva Vocab!.entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
