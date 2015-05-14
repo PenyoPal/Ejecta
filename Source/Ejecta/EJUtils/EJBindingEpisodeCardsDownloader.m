@@ -104,14 +104,13 @@ JSObjectRef NSArrayToJSArray(JSContextRef ctx, NSArray *arr) {
 }
 
 EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
-    NSLog(@"downloadEpisodeCards... %zu", argc);
+    // For testing purposes, clear cache
+//    [[NSURLCache sharedURLCache] removeAllCachedResponses];
     if (argc < 3) {
         return NULL;
     }
     NSURL *remoteUrl = [NSURL URLWithString:JSValueToNSString(ctx, argv[0])];
-    NSLog(@"Remote url = %@", remoteUrl);
     long assetSize = (long)JSValueToNumberFast(ctx, argv[1]);
-    NSLog(@"asset size = %ld", assetSize);
     JSObjectRef arr = (JSObjectRef)argv[2];
     if (!JSValueIsArray(ctx, arr)) {
         return NULL;
@@ -128,7 +127,6 @@ EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
                            *failed = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < nItems; i++) {
         __block NSString *cardName = [JSValueToNSString(ctx, JSArrayValueAtIndex(ctx, arr, i)) retain];
-        NSLog(@"Dispatching block to dl %@", cardName);
         dispatch_group_async(group, queue, ^{
             NSLog(@"Downloading %@", cardName);
             NSURL *cardURL = [NSURL URLWithString:[NSString stringWithFormat:@"/images/%ld/%@_card_%ld.png", assetSize, cardName, assetSize]
@@ -150,7 +148,7 @@ EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
         JSContextRef ctx = scriptView.jsGlobalContext;
         if (successCb) {
-            JSValueRef params[] = { NSArrayToJSArray(ctx, got), NSArrayToJSArray(ctx, failed)};
+            JSValueRef params[] = { NSArrayToJSArray(ctx, got), NSArrayToJSArray(ctx, failed) };
             [scriptView invokeCallback:successCb thisObject:NULL argc:2 argv:params];
         }
         [self cleanUp];
