@@ -35,14 +35,30 @@ JSValueRef JSArrayValueAtIndex(JSContextRef ctx, JSObjectRef arr, NSUInteger idx
     return JSObjectGetPropertyAtIndex(ctx, arr, idx, NULL);
 }
 
+// Currently assumes that values are strings
+JSObjectRef NSArrayToJSArray(JSContextRef ctx, NSArray *arr) {
+    JSStringRef name = JSStringCreateWithUTF8CString("Array");
+    JSObjectRef arrayProto = (JSObjectRef)JSObjectGetProperty(ctx, JSContextGetGlobalObject(ctx), name, NULL);
+    JSStringRelease(name);
+
+    JSObjectRef jsArr = JSObjectCallAsConstructor(ctx, arrayProto, 0, NULL, NULL);
+    JSStringRef pushName = JSStringCreateWithUTF8CString("push");
+    JSObjectRef push = (JSObjectRef)JSObjectGetProperty(ctx, jsArr, pushName, NULL);
+    JSStringRelease(pushName);
+    [arr enumerateObjectsUsingBlock:^(NSString *obj, NSUInteger idx, BOOL *stop) {
+        JSValueRef args[] = { NSStringToJSValue(ctx, obj) };
+        JSObjectCallAsFunction(ctx, push, jsArr, 1, args, NULL);
+    }];
+    return jsArr;
+}
+
 @implementation EJBindingEpisodeCardsDownloader
 
 #pragma mark - Lifecycle
 - (instancetype)initWithContext:(JSContextRef)ctxp argc:(size_t)argc argv:(const JSValueRef [])argv
 {
     if (self = [super initWithContext:ctxp argc:argc argv:argv]) {
-        errorCb = successCb = NULL;
-        downloadSuccess = YES;
+        successCb = NULL;
     }
     return self;
 }
@@ -50,10 +66,6 @@ JSValueRef JSArrayValueAtIndex(JSContextRef ctx, JSObjectRef arr, NSUInteger idx
 - (void)cleanUp
 {
     JSContextRef gctx = scriptView.jsGlobalContext;
-    if (errorCb) {
-        JSValueUnprotect(gctx, errorCb);
-        errorCb = NULL;
-    }
     if (successCb) {
         JSValueUnprotect(gctx, successCb);
         successCb = NULL;
@@ -61,7 +73,7 @@ JSValueRef JSArrayValueAtIndex(JSContextRef ctx, JSObjectRef arr, NSUInteger idx
 }
 
 #pragma mark - saving content
-- (void)saveEpisodeCard:(NSData *)cardData forEpisode:(NSString *)episode andAssetSize:(long)assetSize
+- (BOOL)saveEpisodeCard:(NSData *)cardData forEpisode:(NSString *)episode andAssetSize:(long)assetSize
 {
     NSLog(@"Saving...");
     NSURL *fileUrl = [NSURL
@@ -78,15 +90,17 @@ JSValueRef JSArrayValueAtIndex(JSContextRef ctx, JSObjectRef arr, NSUInteger idx
          withIntermediateDirectories:YES attributes:nil error:&err];
         if (err) {
             NSLog(@"Failed to create directory! %@", err.localizedDescription);
-            return;
+            return NO;
         }
     }
     NSError *err = nil;
     [cardData writeToURL:fileUrl options:NSDataWritingAtomic error:&err];
     if (err) {
         NSLog(@"Failed to write episode card for %@: %@", episode, err.localizedDescription);
+        return NO;
     }
     NSLog(@"Saved content to %@", fileUrl);
+    return YES;
 }
 
 EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
@@ -106,14 +120,12 @@ EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
         successCb = JSValueToObject(ctx, argv[3], NULL);
         JSValueProtect(ctx, successCb);
     }
-    if( argc > 4 && JSValueIsObject(ctx, argv[4]) ) {
-        errorCb = JSValueToObject(ctx, argv[4], NULL);
-        JSValueProtect(ctx, errorCb);
-    }
     NSUInteger nItems = JSArrayGetCount(ctx, arr);
     NSLog(@"Downloading %d items", nItems);
     dispatch_group_t group = dispatch_group_create();
     dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
+    __block NSMutableArray *got = [[NSMutableArray alloc] init],
+                           *failed = [[NSMutableArray alloc] init];
     for (NSUInteger i = 0; i < nItems; i++) {
         __block NSString *cardName = [JSValueToNSString(ctx, JSArrayValueAtIndex(ctx, arr, i)) retain];
         NSLog(@"Dispatching block to dl %@", cardName);
@@ -126,27 +138,24 @@ EJ_BIND_FUNCTION(downloadEpisodeCards, ctx, argc, argv) {
             NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&resp error:&err];
             if (err) {
                 NSLog(@"Downloading episode card %@ failed: %@", cardName, err.localizedDescription);
-                downloadSuccess = NO;
+                [failed addObject:cardName];
+            } else if (![self saveEpisodeCard:data forEpisode:cardName andAssetSize:assetSize]) {
+                [failed addObject:cardName];
             } else {
-                [self saveEpisodeCard:data forEpisode:cardName andAssetSize:assetSize];
+                [got addObject:cardName];
             }
             [cardName release];
         });
     }
     dispatch_group_notify(group, dispatch_get_main_queue(), ^{
-        if (downloadSuccess) {
-            if (successCb) {
-                JSValueRef params[] = {};
-                [scriptView invokeCallback:successCb thisObject:NULL argc:0 argv:params];
-            }
-        } else {
-            if (errorCb) {
-                // TODO: cb should indicate which failed?
-                JSValueRef params[] = {};
-                [scriptView invokeCallback:errorCb thisObject:NULL argc:0 argv:params];
-            }
+        JSContextRef ctx = scriptView.jsGlobalContext;
+        if (successCb) {
+            JSValueRef params[] = { NSArrayToJSArray(ctx, got), NSArrayToJSArray(ctx, failed)};
+            [scriptView invokeCallback:successCb thisObject:NULL argc:2 argv:params];
         }
         [self cleanUp];
+        [got release];
+        [failed release];
     });
     return NULL;
 }

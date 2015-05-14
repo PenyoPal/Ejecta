@@ -10,9 +10,7 @@
 
 @interface EJBindingEpisodeCardsDownloader : EJBindingBase
 {
-    BOOL downloadSuccess;
     JSObjectRef successCb;
-    JSObjectRef errorCb;
 }
 
 @end
